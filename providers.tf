@@ -4,6 +4,10 @@ terraform {
       source = "hetznercloud/hcloud"
     }
   }
+
+  backend "kubernetes" {
+    secret_suffix = "cloud"
+  }
 }
 
 provider "hcloud" {
