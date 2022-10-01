@@ -22,7 +22,7 @@ resource "hcloud_server" "servers" {
     cluster_user      = var.cluster_user
     public_ssh_key    = var.my_public_ssh_key
     servers           = local.servers
-    disabled_services = "traefik,servicelb"
+    disabled_services = "traefik"
     channel           = var.k3s_channel
     interface         = each.value.private_interface
     token             = random_password.k3s_token.result
