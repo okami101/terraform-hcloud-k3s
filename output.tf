@@ -9,7 +9,7 @@ output "bastion_ip" {
 }
 
 output "controller_ips" {
-  value       = [for c in local.controllers : hcloud_server.servers[c.name].ipv4_address]
+  value       = [for s in local.servers : hcloud_server.servers[s.name].ipv4_address if s.role == "controller"]
   description = "Public ip address of the controllers"
 }
 

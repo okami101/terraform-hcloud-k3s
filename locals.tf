@@ -23,5 +23,4 @@ locals {
   ])
   bastion_server_name = "controller-01"
   bastion_server      = one([for s in local.servers : s if s.name == local.bastion_server_name])
-  controllers         = tolist([for s in local.servers : s if s.role == "controller"])
 }
