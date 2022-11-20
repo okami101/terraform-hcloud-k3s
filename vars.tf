@@ -100,7 +100,7 @@ variable "lb_services" {
   description = "List of tcp ports to be load balanced through workers"
 }
 
-variable "lb_server_role" {
+variable "lb_worker_role" {
   type        = string
   default     = "worker"
   description = "Server role to be load balanced"

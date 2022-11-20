@@ -32,7 +32,7 @@ resource "hcloud_load_balancer_service" "lb_services" {
 }
 
 resource "hcloud_load_balancer_target" "lb_targets" {
-  for_each         = { for i, t in local.servers : t.name => t if t.role == var.lb_server_role }
+  for_each         = { for i, t in local.servers : t.name => t if t.role == var.lb_worker_role }
   type             = "server"
   load_balancer_id = hcloud_load_balancer.lb.id
   server_id        = hcloud_server.servers[each.key].id
