@@ -157,7 +157,7 @@ Note that there is a specific default `worker` role that involve :
 
 ### Load balancer
 
-Use `lb_services` to specify which services (TCP ports) must be load balanced, mostly `80` and `443` (default).
+Use `lb_services` to specify which services (TCP ports) must be load balanced, mostly `80` and `443` (default). You can also use `lb_server_role` to specify which role must be load balanced, by default it's `worker` role.
 
 Note as `443` port will use [proxy protocol](https://www.haproxy.org/download/1.8/doc/proxy-protocol.txt) in order to keep user source information when traffic arrive to our workers (client IP). So be sure that your ingress controller (nginx, traefik, etc.) is configured for accepting this protocol.
 

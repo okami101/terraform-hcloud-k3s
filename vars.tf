@@ -99,3 +99,9 @@ variable "lb_services" {
   type        = list(number)
   description = "List of tcp ports to be load balanced through workers"
 }
+
+variable "lb_server_role" {
+  type        = string
+  default     = "worker"
+  description = "Server role to be load balanced"
+}
