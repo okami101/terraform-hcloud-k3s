@@ -42,5 +42,6 @@ runcmd:
 %{ endif ~}
     --flannel-iface=${interface} --node-ip ${node_ip}
 %{ if role != "worker" ~}
+    --node-label node-role.kubernetes.io=${role == "controller" ? "master" : role}
     --node-taint node-role.kubernetes.io/${role == "controller" ? "master" : role}:NoSchedule
 %{ endif ~}
