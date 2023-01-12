@@ -93,6 +93,7 @@ variable "volumes" {
     size   = number,
   }))
   description = "List of volumes to be attached to nodes. Key must correspond to a valid worker type."
+  default     = []
 }
 
 variable "lb_services" {
