@@ -29,6 +29,7 @@ resource "hcloud_server" "servers" {
     controller_ip     = local.bastion_server.ip
     node_ip           = each.value.ip
     role              = each.value.role
+    args              = { for i, a in var.kubelet_args : a.key => a.value }
   })
 
   lifecycle {

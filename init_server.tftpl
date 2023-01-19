@@ -40,7 +40,11 @@ runcmd:
 %{ if role == "controller" ~}
     server --disable ${disabled_services}
 %{ endif ~}
-    --flannel-iface=${interface} --node-ip ${node_ip}
+    --flannel-iface=${interface}
+    --node-ip=${node_ip}
 %{ if role != "worker" ~}
-    --node-taint node-role.kubernetes.io/${role == "controller" ? "master" : role}:NoSchedule
+    --node-taint=node-role.kubernetes.io/${role == "controller" ? "master" : role}:NoSchedule
 %{ endif ~}
+%{ for key, value in args ~}
+    --kubelet-arg=${key}=${value}
+%{ endfor ~}

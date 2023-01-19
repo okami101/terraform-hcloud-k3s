@@ -106,3 +106,11 @@ variable "lb_worker_role" {
   default     = "worker"
   description = "Server role to be load balanced"
 }
+
+variable "kubelet_args" {
+  type = list(object({
+    key   = string,
+    value = string
+  }))
+  description = "Additional arguments for kubelet service"
+}
