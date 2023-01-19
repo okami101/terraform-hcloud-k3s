@@ -23,7 +23,9 @@ packages:
 write_files:
   - path: /etc/hosts
     content: |
-      ${controller_ip} bastion
+%{ for s in servers ~}
+      ${s.ip} ${s.name} ${cluster_name}-${s.name}
+%{ endfor ~}
     append: true
 
 runcmd:
@@ -31,20 +33,14 @@ runcmd:
   - sed -i "/^PermitRootLogin/s/^.*$/PermitRootLogin no/" /etc/ssh/sshd_config
   - systemctl restart ssh
   - curl -o bootstrap-salt.sh -L https://bootstrap.saltproject.io
-  - sh bootstrap-salt.sh -i ${minion_id}
-  - 'sed -i "s/#master: salt/master: bastion/" /etc/salt/minion'
+  - sh bootstrap-salt.sh -M -i ${minion_id}
+  - 'sed -i "s/#master: salt/master: localhost/" /etc/salt/minion'
   - systemctl restart salt-minion
-  - sleep 30
   - >
-    curl -sfL https://get.k3s.io | INSTALL_K3S_CHANNEL=${channel} K3S_TOKEN=${token} K3S_URL=https://${controller_ip}:6443 sh -s -
-%{ if role == "controller" ~}
-    server --disable ${disabled_services}
-%{ endif ~}
-    --flannel-iface=${interface}
-    --node-ip=${node_ip}
-%{ if role != "worker" ~}
-    --node-taint=node-role.kubernetes.io/${role == "controller" ? "master" : role}:NoSchedule
-%{ endif ~}
+    curl -sfL https://get.k3s.io | INSTALL_K3S_CHANNEL=${channel} K3S_TOKEN=${token} sh -s -
+    server --cluster-init --disable=${disabled_services}
+    --flannel-iface=${interface} --node-ip=${node_ip}
+    --node-taint=node-role.kubernetes.io/master:NoSchedule
 %{ for key, value in args ~}
     --kubelet-arg=${key}=${value}
 %{ endfor ~}
