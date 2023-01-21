@@ -10,7 +10,6 @@ This Terraform template will generate a ready-to-go cloud infrastructure through
 2. **2 worker nodes**
 3. **1 load balancer** for HA with above workers as targets, balancing 80 and 443 TCP port (L4 protocol)
 4. **1 data node** tainted for any Data/DB specific tasks
-5. **1 10GB volume** mounted on data node
 
 All nodes use **CX21** server type by default (configurable, cf below for advanced configuration).
 Total price of this default setup : 6.42 \* 4 + 6.47 + 0.53 \* 1 = **$32,68** / month.
@@ -146,14 +145,6 @@ Note that there is a specific default `worker` role that involve :
 
 1. Will be the only taken into account for load balancing, as others should be use mainly for specific tasks.
 2. The dedicated tasks nodes (those different from `worker` role) will be tainted for preventing any scheduling from pods without proper toleration.
-
-### Volumes
-
-| Property | Description                                                                              |
-| -------- | ---------------------------------------------------------------------------------------- |
-| name     | Hetzner volume identifier name                                                           |
-| server   | Server where the volume will be automatically mounted, must correspond to a valid worker |
-| size     | Size of volume (from 10GB to 10TB)                                                       |
 
 ### Load balancer
 
