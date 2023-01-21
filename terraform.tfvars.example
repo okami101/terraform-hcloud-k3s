@@ -26,11 +26,4 @@ workers = [
     private_interface = "ens10"
   }
 ]
-volumes = [
-  {
-    name   = "vol-01",
-    server = "controller-01"
-    size   = 10
-  }
-]
 lb_services = [80, 443]

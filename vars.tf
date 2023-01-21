@@ -86,16 +86,6 @@ variable "workers" {
   description = "List of all additional worker types to create for k3s cluster. Each type is identified by specific role and can have a different number of instances. The k3sctl config will be updated as well. If the role is different from 'worker', this node will be tainted for preventing any scheduling from pods without proper tolerations."
 }
 
-variable "volumes" {
-  type = list(object({
-    name   = string,
-    server = string,
-    size   = number,
-  }))
-  description = "List of volumes to be attached to nodes. Key must correspond to a valid worker type."
-  default     = []
-}
-
 variable "lb_services" {
   type        = list(number)
   description = "List of tcp ports to be load balanced through workers"

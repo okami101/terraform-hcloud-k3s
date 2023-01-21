@@ -170,7 +170,6 @@ The below config will create following Kubernetes cluster typology :
 * **2 data workers** tainted as `data` for data specific tasks (DB, Elasticsearch, ...)
 * **2 runner workers** tainted as `runner` for any CI building tasks with powerful AMD CPU
 * **2 monitoring workers** tainted as `monitor` for any monitoring tasks (Prometheus and scrapers, etc.)
-* **2 volumes**, 1 for each above `data` servers
 * **3 load balanced TCP ports** to default workers (with role `worker`) (`22` is useful for any self-hosted VCS service like GitLab, Gitea)
 
 ```tf
@@ -203,18 +202,6 @@ workers = [
     server_type       = "cx31"
     server_count      = 2
     private_interface = "ens10"
-  }
-]
-volumes = [
-  {
-    name   = "vol-01"
-    server = "data-01"
-    size   = 10
-  },
-  {
-    name   = "vol-02"
-    server = "data-02"
-    size   = 10
   }
 ]
 lb_services = [22, 80, 443]
