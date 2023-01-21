@@ -20,7 +20,7 @@ output "lb_ip" {
 
 output "ssh_config" {
   description = "SSH config to access to the server"
-  value = templatefile("ssh.config.tftpl", {
+  value = templatefile("${path.module}/ssh.config.tftpl", {
     cluster_name = var.cluster_name
     cluster_user = var.cluster_user
     bastion_ip   = hcloud_server.servers[local.bastion_server_name].ipv4_address

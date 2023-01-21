@@ -14,7 +14,7 @@ resource "hcloud_server" "servers" {
   depends_on = [
     hcloud_network_subnet.network_subnet
   ]
-  user_data = templatefile(each.value.name == local.bastion_server_name ? "init_server.tftpl" : "init_agent.tftpl", {
+  user_data = templatefile("${path.module}/init_${each.value.name == local.bastion_server_name ? "server" : "agent"}.tftpl", {
     server_timezone   = var.server_timezone
     server_locale     = var.server_locale
     minion_id         = each.value.name
