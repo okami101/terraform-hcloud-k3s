@@ -1,12 +1,19 @@
-locals {
-  hcloud_token = "xxxxxxxxxxxxxxxxYYYYYYYYYYzzzzzzzzzzzzzzzzz"
+terraform {
+  required_providers {
+    hcloud = {
+      source = "hetznercloud/hcloud"
+    }
+  }
+}
+
+provider "hcloud" {
+  token = "xxx"
 }
 
 module "hcloud-k3s" {
   providers = {
     hcloud = hcloud
   }
-  hcloud_token = local.hcloud_token
 
   source = "okami101/hcloud-k3s"
 
@@ -46,16 +53,4 @@ module "hcloud-k3s" {
   ]
 
   lb_services = [80, 443]
-}
-
-provider "hcloud" {
-  token = local.hcloud_token
-}
-
-terraform {
-  required_providers {
-    hcloud = {
-      source = "hetznercloud/hcloud"
-    }
-  }
 }

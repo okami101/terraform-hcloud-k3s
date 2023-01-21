@@ -1,9 +1,3 @@
-variable "hcloud_token" {
-  type        = string
-  sensitive   = true
-  description = "The token to access the Hetzner Cloud API (must have write access)"
-}
-
 variable "server_image" {
   type        = string
   default     = "ubuntu-22.04"
