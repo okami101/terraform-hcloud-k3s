@@ -32,6 +32,7 @@ resource "hcloud_server" "servers" {
       interface           = each.value.private_interface
       node_ip             = each.value.ip
       role                = each.value.role
+      taints              = each.value.taints
       args                = { for i, a in var.kubelet_args : a.key => a.value }
     }),
     cluster_name = var.cluster_name

@@ -67,37 +67,6 @@ variable "k3s_channel" {
   default     = "stable"
 }
 
-variable "controllers" {
-  description = "Size and count of controller servers"
-  type = object({
-    server_type       = string,
-    server_count      = string,
-    private_interface = string
-  })
-}
-
-variable "workers" {
-  description = "List of all additional worker types to create for k3s cluster. Each type is identified by specific role and can have a different number of instances. The k3sctl config will be updated as well. If the role is different from 'worker', this node will be tainted for preventing any scheduling from pods without proper tolerations."
-  type = list(object({
-    role              = string
-    server_type       = string
-    server_count      = number
-    private_interface = string
-  }))
-}
-
-variable "lb_services" {
-  description = "List of tcp ports to be load balanced through workers"
-  type        = list(number)
-  default     = [80, 443]
-}
-
-variable "lb_worker_role" {
-  description = "Server role to be load balanced"
-  type        = string
-  default     = "worker"
-}
-
 variable "kubelet_args" {
   description = "Additional arguments for each kubelet service"
   type = list(object({
@@ -111,4 +80,37 @@ variable "disabled_components" {
   description = "Components to disable for k3s installation"
   type        = list(string)
   default     = []
+}
+
+variable "control_planes" {
+  description = "Size and count of controller servers"
+  type = object({
+    server_type       = string,
+    private_interface = string
+    count             = string,
+    taints            = list(string)
+  })
+}
+
+variable "agent_nodepools" {
+  description = "List of all additional worker types to create for k3s cluster. Each type is identified by specific role and can have a different number of instances. The k3sctl config will be updated as well. If the role is different from 'worker', this node will be tainted for preventing any scheduling from pods without proper tolerations."
+  type = list(object({
+    name              = string
+    server_type       = string
+    private_interface = string
+    count             = number
+    taints            = list(string)
+  }))
+}
+
+variable "lb_services" {
+  description = "List of tcp ports to be load balanced through workers"
+  type        = list(number)
+  default     = [80, 443]
+}
+
+variable "lb_worker_role" {
+  description = "Server role to be load balanced"
+  type        = string
+  default     = "worker"
 }

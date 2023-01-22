@@ -36,24 +36,31 @@ module "hcloud-k3s" {
   disabled_components = ["traefik"]
   kubelet_args = []
 
-  controllers = {
+  control_planes = {
     server_type       = "cx21"
-    server_count      = 1
     private_interface = "ens10"
+    count             = 1
+    taints            = [
+      "node-role.kubernetes.io/master:NoSchedule"
+    ]
   }
 
-  workers = [
+  agent_nodepools = [
     {
-      role              = "worker"
+      name              = "worker"
       server_type       = "cx21"
-      server_count      = 2
       private_interface = "ens10"
+      count             = 2
+      taints            = []
     },
     {
-      role              = "data"
+      name              = "data"
       server_type       = "cx21"
-      server_count      = 1
       private_interface = "ens10"
+      count             = 1
+      taints            = [
+        "node-role.kubernetes.io/data:NoSchedule"
+      ]
     }
   ]
 

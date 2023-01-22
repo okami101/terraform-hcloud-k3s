@@ -5,9 +5,9 @@
 %{ endif ~}
     --flannel-iface=${interface}
     --node-ip=${node_ip}
-%{ if role != "worker" ~}
-    --node-taint=node-role.kubernetes.io/${role == "controller" ? "master" : role}:NoSchedule
-%{ endif ~}
+%{ for taint in taints ~}
+    --node-taint=${taint}
+%{ endfor ~}
 %{ for key, value in args ~}
     --kubelet-arg=${key}=${value}
 %{ endfor ~}

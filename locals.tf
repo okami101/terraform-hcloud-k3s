@@ -1,22 +1,24 @@
 locals {
   servers = flatten([
     [
-      for i in range(var.controllers.server_count) : {
+      for i in range(var.control_planes.count) : {
         name              = "controller-${format("%02d", i + 1)}"
-        server_type       = var.controllers.server_type
-        role              = "controller"
+        server_type       = var.control_planes.server_type
+        private_interface = var.control_planes.private_interface
         ip                = "10.0.0.${i + 2}"
-        private_interface = var.controllers.private_interface
+        role              = "controller"
+        taints            = var.control_planes.taints
       }
     ],
     flatten([
-      for i, s in var.workers : [
-        for j in range(s.server_count) : {
-          name              = "${s.role}-${format("%02d", j + 1)}"
+      for i, s in var.agent_nodepools : [
+        for j in range(s.count) : {
+          name              = "${s.name}-${format("%02d", j + 1)}"
           server_type       = s.server_type
-          role              = s.role
-          ip                = "10.0.${i + 1}.${j + 1}"
           private_interface = s.private_interface
+          ip                = "10.0.${i + 1}.${j + 1}"
+          role              = s.name
+          taints            = s.taints
         }
       ]
     ])
