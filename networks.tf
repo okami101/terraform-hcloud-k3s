@@ -67,18 +67,3 @@ resource "hcloud_firewall" "firewall_controllers" {
     source_ips = var.my_ip_addresses
   }
 }
-
-resource "hcloud_firewall_attachment" "deny_all" {
-  firewall_id = hcloud_firewall.firewall_private.id
-  server_ids  = [for s in local.servers : hcloud_server.servers[s.name].id]
-}
-
-resource "hcloud_firewall_attachment" "bastion" {
-  firewall_id = hcloud_firewall.firewall_bastion.id
-  server_ids  = [hcloud_server.servers[local.bastion_server_name].id]
-}
-
-resource "hcloud_firewall_attachment" "controllers" {
-  firewall_id = hcloud_firewall.firewall_controllers.id
-  server_ids  = [for s in local.servers : hcloud_server.servers[s.name].id if s.role == "controller"]
-}

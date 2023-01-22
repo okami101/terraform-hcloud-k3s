@@ -1,13 +1,14 @@
 resource "hcloud_server" "servers" {
-  for_each                   = { for i, s in local.servers : s.name => s }
-  name                       = "${var.cluster_name}-${each.value.name}"
-  image                      = var.server_image
-  location                   = var.server_location
-  server_type                = each.value.server_type
-  ignore_remote_firewall_ids = true
-  firewall_ids = [
-    hcloud_firewall.firewall_private.id
-  ]
+  for_each    = { for i, s in local.servers : s.name => s }
+  name        = "${var.cluster_name}-${each.value.name}"
+  image       = var.server_image
+  location    = var.server_location
+  server_type = each.value.server_type
+  firewall_ids = concat(
+    [hcloud_firewall.firewall_private.id],
+    each.value.name == local.bastion_server_name ? [hcloud_firewall.firewall_bastion.id] : [],
+    each.value.role == "controller" ? [hcloud_firewall.firewall_controllers.id] : []
+  )
   ssh_keys = [
     var.cluster_user
   ]
