@@ -1,11 +1,5 @@
 ${global_cloud_config}
 
-write_files:
-  - path: /etc/hosts
-    content: |
-      ${bastion_ip} bastion
-    append: true
-
 runcmd:
 ${global_runcmd}
   - sleep 30

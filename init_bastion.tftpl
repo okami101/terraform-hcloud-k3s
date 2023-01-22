@@ -1,13 +1,5 @@
 ${global_cloud_config}
 
-write_files:
-  - path: /etc/hosts
-    content: |
-%{ for s in servers ~}
-      ${s.ip} ${s.name} ${cluster_name}-${s.name}
-%{ endfor ~}
-    append: true
-
 runcmd:
 ${global_runcmd}
   - >

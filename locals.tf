@@ -16,7 +16,7 @@ locals {
           name              = "${s.name}-${format("%02d", j + 1)}"
           server_type       = s.server_type
           private_interface = s.private_interface
-          ip                = "10.0.${i + 1}.${j + 1}"
+          ip                = "10.0.${coalesce(s.private_ip_index, i) + 1}.${j + 1}"
           role              = s.name
           taints            = s.taints
         }

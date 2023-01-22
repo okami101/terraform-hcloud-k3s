@@ -77,9 +77,16 @@ Once logged to your bastion, don't forget to active *Salt*, just type `sudo salt
 
 #### Check K3S status
 
-When logged, use `sudo kubectl get nodes -o wide` to check node status and be sure all nodes is ready and have proper private IPs. Then use `cat /etc/rancher/k3s/k3s.yaml` to get the kubeconfig file and use it with your local kubectl (default to `~/.kube/config`). Adapt the IP accordingly to any valid public controllers IP.
+When logged, use `sudo kubectl get nodes -o wide` to check node status and be sure all nodes is ready and have proper private IPs. Then use `sudo cat /etc/rancher/k3s/k3s.yaml` to get the kubeconfig file and use it with your local kubectl (default to `~/.kube/config`). Adapt the IP accordingly to any valid public controllers IP.
 
 You should now be able to use `kubectl` commands remotely to manage your cluster and ready-to-go to do some deployments !
+
+#### Upscaling and downscaling
+
+You can easily add or remove nodes by changing the `count` variable of each pool or control plane. Then use `terraform apply` to apply the changes.
+
+* When adding, the K3S server or agent will be automatically added to the cluster and ready to use. Don't forget to accept the new minion with `sudo salt-key -A`.
+* When removing, you should manually drain and delete node before removing the node with `sudo kubectl drain --ignore-daemonsets <cluster_name>-<pool>-<count>` and `sudo kubectl delete nodes <cluster_name>-<pool>-<count>`. Then use `terraform apply` to delete the node physically.
 
 ## 📝 License
 

@@ -24,9 +24,10 @@ resource "hcloud_server" "servers" {
       public_ssh_key  = var.my_public_ssh_key
     }),
     global_runcmd = templatefile("${path.module}/init_global_runcmd.tftpl", {
-      ssh_port  = var.ssh_port
-      minion_id = each.value.name
-      bastion   = each.value.name == local.bastion_server_name
+      ssh_port   = var.ssh_port
+      minion_id  = each.value.name
+      bastion    = each.value.name == local.bastion_server_name
+      bastion_ip = local.bastion_server.ip
     }),
     global_k3s_config = templatefile("${path.module}/init_global_k3s.tftpl", {
       disabled_components = var.disabled_components
@@ -37,7 +38,6 @@ resource "hcloud_server" "servers" {
       args                = { for i, a in var.kubelet_args : a.key => a.value }
     }),
     cluster_name = var.cluster_name
-    servers      = local.servers
     channel      = var.k3s_channel
     token        = random_password.k3s_token.result
     bastion_ip   = local.bastion_server.ip

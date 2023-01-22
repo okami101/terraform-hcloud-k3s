@@ -5,7 +5,8 @@ Host ${cluster_name}
 
 %{ for s in servers ~}
 Host ${cluster_name}-${s.name}
-    HostName ${cluster_name}-${s.name}
+    HostName ${s.ip}
+    HostKeyAlias ${cluster_name}-${s.name}
     User ${cluster_user}
     Port 2222
     ProxyJump ${cluster_name}

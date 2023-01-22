@@ -98,6 +98,7 @@ variable "agent_nodepools" {
     name              = string
     server_type       = string
     private_interface = string
+    private_ip_index  = optional(number)
     count             = number
     taints            = list(string)
   }))
