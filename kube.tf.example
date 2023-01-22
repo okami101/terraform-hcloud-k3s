@@ -111,3 +111,19 @@ module "hcloud-k3s" {
     }
   ]
 }
+
+output "bastion_ip" {
+  value = module.hcloud-k3s.bastion_ip
+}
+
+output "controller_ips" {
+  value = module.hcloud-k3s.controller_ips
+}
+
+output "lb_ip" {
+  value = module.hcloud-k3s.lb_ip
+}
+
+output "ssh_config" {
+  value = module.hcloud-k3s.ssh_config
+}
