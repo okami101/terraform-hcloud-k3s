@@ -22,6 +22,18 @@ variable "server_locale" {
   description = "The default locale to create hcloud servers"
 }
 
+variable "server_packages" {
+  description = "Default packages to install on cloud init"
+  type        = list(string)
+  default     = []
+}
+
+variable "ssh_port" {
+  description = "Default SSH port to use for node access"
+  type        = number
+  default     = null
+}
+
 variable "cluster_name" {
   type        = string
   default     = "kube"

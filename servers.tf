@@ -17,9 +17,11 @@ resource "hcloud_server" "servers" {
   user_data = templatefile("${path.module}/init_${each.value.name == local.bastion_server_name ? "server" : "agent"}.tftpl", {
     server_timezone   = var.server_timezone
     server_locale     = var.server_locale
+    server_packages   = var.server_packages
     minion_id         = each.value.name
     cluster_name      = var.cluster_name
     cluster_user      = var.cluster_user
+    ssh_port          = var.ssh_port
     public_ssh_key    = var.my_public_ssh_key
     servers           = local.servers
     disabled_services = "traefik"

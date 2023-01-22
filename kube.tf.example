@@ -21,6 +21,9 @@ module "hcloud-k3s" {
   server_location    = "nbg1"
   server_timezone    = "Europe/Paris"
   server_locale      = "fr_FR.UTF-8"
+  server_packages    = ["nfs-common"]
+
+  ssh_port = 2222
 
   cluster_name       = "kube"
   cluster_user       = "kube"
