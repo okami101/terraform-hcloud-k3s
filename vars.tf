@@ -17,7 +17,7 @@ variable "server_timezone" {
 }
 
 variable "server_locale" {
-  description = "The default locale to create hcloud servers"
+  description = "The default locale to use for the servers"
   type        = string
   default     = null
 }
@@ -83,7 +83,7 @@ variable "disabled_components" {
 }
 
 variable "control_planes" {
-  description = "Size and count of controller servers"
+  description = "Size and count of control planes"
   type = object({
     server_type       = string,
     private_interface = string
@@ -103,14 +103,23 @@ variable "agent_nodepools" {
   }))
 }
 
-variable "lb_services" {
-  description = "List of tcp ports to be load balanced through workers"
-  type        = list(number)
-  default     = [80, 443]
+variable "lb_type" {
+  description = "Server type of load balancer"
+  type        = string
 }
 
-variable "lb_worker_role" {
-  description = "Server role to be load balanced"
+variable "lb_target" {
+  description = "Nodepool to be load balanced"
   type        = string
-  default     = "worker"
+}
+
+variable "lb_services" {
+  description = "List of tcp ports to be load balanced through workers"
+  type = list(object({
+    port          = number
+    target_port   = number
+    protocol      = optional(string)
+    proxyprotocol = optional(bool)
+  }))
+  default = []
 }

@@ -12,7 +12,7 @@ resource "hcloud_network_subnet" "network_subnet" {
 
 resource "hcloud_load_balancer" "lb" {
   name               = "${var.cluster_name}-lb"
-  load_balancer_type = "lb11"
+  load_balancer_type = var.lb_type
   location           = var.server_location
 }
 
@@ -23,16 +23,16 @@ resource "hcloud_load_balancer_network" "lb_network" {
 }
 
 resource "hcloud_load_balancer_service" "lb_services" {
-  for_each         = { for i, port in var.lb_services : port => port }
+  for_each         = { for i, s in var.lb_services : s.port => s }
   load_balancer_id = hcloud_load_balancer.lb.id
-  protocol         = "tcp"
-  listen_port      = each.value
-  destination_port = each.value
-  proxyprotocol    = each.value == 443
+  protocol         = coalesce(each.value.protocol, "http")
+  listen_port      = each.value.port
+  destination_port = each.value.target_port
+  proxyprotocol    = coalesce(each.value.proxyprotocol, false)
 }
 
 resource "hcloud_load_balancer_target" "lb_targets" {
-  for_each         = { for i, t in local.servers : t.name => t if t.role == var.lb_worker_role }
+  for_each         = { for i, t in local.servers : t.name => t if t.role == var.lb_target }
   type             = "server"
   load_balancer_id = hcloud_load_balancer.lb.id
   server_id        = hcloud_server.servers[each.key].id

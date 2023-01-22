@@ -1,6 +1,6 @@
 # Terraform Hetzner Cloud K3S
 
-## :dart: About
+## 🎯 About
 
 Get a powerful HA-ready Kubernetes cluster in less than **5 minutes** for less than **$30/month**, with easy configuration setup through simple Terraform variables, 💯 GitOps compatible !
 
@@ -26,7 +26,7 @@ All nodes including LB will be linked with a proper private network as well as *
 
 This Terraform template includes **[Salt Project](https://docs.saltproject.io)** as well for easy global OS management of the cluster through ssh, perfect for upgrades in one single time ! The NFS client is also installed by default for any usage through remote NFS server for stateful workloads.
 
-## :white_check_mark: Requirements
+## ✅ Requirements
 
 Before starting, you need to have :
 
@@ -36,7 +36,7 @@ Before starting, you need to have :
 
 Before continue, **DO NOT** reuse any existing hcloud project as we'll use terraform !
 
-## :checkered_flag: Starting
+## 🏁 Starting
 
 ### Prepare
 
@@ -198,7 +198,7 @@ workers = [
 lb_services = [22, 80, 443]
 ```
 
-## :memo: License
+## 📝 License
 
 This project is under license from MIT. For more details, see the [LICENSE](https://adr1enbe4udou1n.mit-license.org/) file.
 

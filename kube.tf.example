@@ -7,7 +7,8 @@ terraform {
 }
 
 provider "hcloud" {
-  token = "xxx"
+  # Here is the required hcloud API token with RW access in order to create all needed resources.
+  token = "xxxxxx"
 }
 
 module "hcloud-k3s" {
@@ -17,52 +18,96 @@ module "hcloud-k3s" {
 
   source = "okami101/hcloud-k3s"
 
-  server_image       = "ubuntu-22.04"
-  server_location    = "nbg1"
-  server_timezone    = "Europe/Paris"
-  server_locale      = "fr_FR.UTF-8"
-  server_packages    = ["nfs-common"]
+  # Next all self-explanatory variables that you can customized. See https://registry.terraform.io/modules/okami101/k3s/hcloud/latest?tab=inputs for description.
 
+  server_image    = "ubuntu-22.04"
+  server_location = "nbg1"
+  server_timezone = "Europe/Paris"
+  server_locale   = "fr_FR.UTF-8"
+
+  # Install nfs-common in order to have working nfs provisioners on kubernetes storage classes.
+  server_packages = ["nfs-common"]
+
+  # Use preferably something different than default 22.
   ssh_port = 2222
 
-  cluster_name       = "k3s"
-  cluster_user       = "kube"
+  # All hostname will use it as a prefix, aka <cluster_name>-worker-01, etc.
+  cluster_name = "k3s"
+  # The unix user for ssh login.
+  cluster_user = "kube"
 
-  my_public_ssh_key  = "ssh-ed25519 xxxxx"
-  my_ip_addresses    = ["0.0.0.0/0", "::/0"]
+  # Your required public ssh key for ssh access through all nodes.
+  my_public_ssh_key = "ssh-ed25519 xxxxxx"
+  # Put your fixed public ip here, heavily recommended for protecting ssh and kube server api port access on bastion server, default to any.
+  my_ip_addresses = ["0.0.0.0/0", "::/0"]
 
-  k3s_channel        = "stable"
+  # Use stable (production usage) or latest (staging usage).
+  k3s_channel = "stable"
 
+  # Disable included k3s traefik ingress controller.
   disabled_components = ["traefik"]
+  # All advanced parameters for each kubelet, see https://kubernetes.io/docs/reference/command-line-tools-reference/kubelet/.
   kubelet_args = []
 
   control_planes = {
-    server_type       = "cx21"
+    server_type = "cx21"
+    # In hetzner, private_interface is the interface name for private network, ens10 is the default one for intel nics, enp7s0 for amd nics.
     private_interface = "ens10"
-    count             = 1
-    taints            = [
+    # The number of control planes. For proper HA, use an odd number, 1, 3, 5, etc. Note as the 1st control plane will be the default bastion server, and will be used as main entry for any SSH access to any nodes.
+    count = 1
+    # Use taints to prevent pods to be scheduled on control planes.
+    taints = [
       "node-role.kubernetes.io/master:NoSchedule"
     ]
   }
 
+  # Here is the worker nodes, categorized according to unique typology (defined as a pool) of servers, taints, etc.
   agent_nodepools = [
     {
+      # Will define the final hostname, aka <cluster_name>-worker-01, etc.
       name              = "worker"
       server_type       = "cx21"
       private_interface = "ens10"
-      count             = 2
-      taints            = []
+      # The number of nodes in this pool. The main parameter for autoscaling.
+      count = 3
+      # No taint, can accept any workloads.
+      taints = []
     },
     {
+      # Here is an example of a nodepool with a different server type, and a taint. Typically used for database oriented nodes.
       name              = "data"
-      server_type       = "cx21"
+      server_type       = "cx31"
       private_interface = "ens10"
       count             = 1
-      taints            = [
+      taints = [
         "node-role.kubernetes.io/data:NoSchedule"
       ]
     }
   ]
 
-  lb_services = [80, 443]
+  # The type of load balancer.
+  lb_type = "lb11"
+  # The above nodepool to be load balanced. These nodes should have a proper ingress controller installed, as traefik.
+  lb_target = "worker"
+  # The load balancer services to be created.
+  lb_services = [
+    {
+      # The port to be exposed.
+      port = 80,
+      # The target port to be forwarded to.
+      target_port = 80,
+      # The layer protocol to be used, http by default.
+      protocol = "tcp"
+    },
+    {
+      port = 443,
+      target_port = 443,
+      # Important note when HTTPS :
+      # Use HTTP for SSL Termination. Certificates must be managed directly on Hetzner Load Balancer.
+      # Use TCP for SSL Passthrough. Certificates must be managed directly on k3s ingress controller.
+      protocol = "tcp",
+      # The proxyprotocol is required to be able to get the real client IP address. Can work on both HTTP and TCP. Targetted ingress controller must support it.
+      proxyprotocol = true
+    }
+  ]
 }
