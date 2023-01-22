@@ -1,8 +1,0 @@
-${global_cloud_config}
-
-runcmd:
-${global_runcmd}
-  - >
-    curl -sfL https://get.k3s.io | INSTALL_K3S_CHANNEL=${channel} K3S_TOKEN=${token} sh -s -
-    server --cluster-init
-${global_k3s_config}

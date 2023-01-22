@@ -15,33 +15,25 @@ resource "hcloud_server" "servers" {
   depends_on = [
     hcloud_network_subnet.network_subnet
   ]
-  user_data = templatefile("${path.module}/init_${each.value.name == local.bastion_server_name ? "bastion" : "default"}.tftpl", {
-    global_cloud_config = templatefile("${path.module}/init_global.tftpl", {
-      server_timezone = var.server_timezone
-      server_locale   = var.server_locale
-      server_packages = var.server_packages
-      cluster_user    = var.cluster_user
-      public_ssh_key  = var.my_public_ssh_key
-    }),
-    global_runcmd = templatefile("${path.module}/init_global_runcmd.tftpl", {
-      ssh_port   = var.ssh_port
-      minion_id  = each.value.name
-      bastion    = each.value.name == local.bastion_server_name
-      bastion_ip = local.bastion_server.ip
-    }),
-    global_k3s_config = templatefile("${path.module}/init_global_k3s.tftpl", {
-      disabled_components = var.disabled_components
-      interface           = each.value.private_interface
-      node_ip             = each.value.ip
-      role                = each.value.role
-      taints              = each.value.taints
-      args                = { for i, a in var.kubelet_args : a.key => a.value }
-    }),
-    cluster_name = var.cluster_name
-    channel      = var.k3s_channel
-    token        = random_password.k3s_token.result
-    bastion_ip   = local.bastion_server.ip
-    role         = each.value.role
+  user_data = templatefile("${path.module}/cloud-init.tftpl", {
+    server_timezone     = var.server_timezone
+    server_locale       = var.server_locale
+    server_packages     = var.server_packages
+    cluster_name        = var.cluster_name
+    cluster_user        = var.cluster_user
+    public_ssh_key      = var.my_public_ssh_key
+    channel             = var.k3s_channel
+    token               = random_password.k3s_token.result
+    bastion_ip          = local.bastion_server.ip
+    is_bastion          = each.value.name == local.bastion_server_name
+    ssh_port            = var.ssh_port
+    minion_id           = each.value.name
+    disabled_components = var.disabled_components
+    interface           = each.value.private_interface
+    node_ip             = each.value.ip
+    role                = each.value.role
+    taints              = each.value.taints
+    args                = { for i, a in var.kubelet_args : a.key => a.value }
   })
 
   lifecycle {
