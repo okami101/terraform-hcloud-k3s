@@ -6,9 +6,9 @@
   - curl -o bootstrap-salt.sh -L https://bootstrap.saltproject.io
 %{ if bastion ~}
   - sh bootstrap-salt.sh -i ${minion_id} -M
-  - sed -i "s/#master: salt/master: localhost/" /etc/salt/minion
+  - 'sed -i "s/#master: salt/master: localhost/" /etc/salt/minion'
 %{ else ~}
   - sh bootstrap-salt.sh -i ${minion_id}
-  - sed -i "s/#master: salt/master: bastion/" /etc/salt/minion
+  - 'sed -i "s/#master: salt/master: bastion/" /etc/salt/minion'
 %{ endif ~}
   - systemctl restart salt-minion
