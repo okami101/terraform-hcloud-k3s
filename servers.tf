@@ -9,7 +9,7 @@ resource "hcloud_server" "servers" {
     hcloud_firewall.firewall_private.id
   ]
   ssh_keys = [
-    var.my_public_ssh_name
+    var.cluster_user
   ]
   depends_on = [
     hcloud_network_subnet.network_subnet
@@ -27,16 +27,18 @@ resource "hcloud_server" "servers" {
       minion_id = each.value.name
       bastion   = each.value.name == local.bastion_server_name
     }),
-    cluster_name      = var.cluster_name
-    servers           = local.servers
-    disabled_services = "traefik"
-    channel           = var.k3s_channel
-    interface         = each.value.private_interface
-    token             = random_password.k3s_token.result
-    controller_ip     = local.bastion_server.ip
-    node_ip           = each.value.ip
-    role              = each.value.role
-    args              = { for i, a in var.kubelet_args : a.key => a.value }
+    global_k3s_config = templatefile("${path.module}/init_global_k3s.tftpl", {
+      disabled_components = var.disabled_components
+      interface           = each.value.private_interface
+      node_ip             = each.value.ip
+      role                = each.value.role
+      args                = { for i, a in var.kubelet_args : a.key => a.value }
+    }),
+    cluster_name = var.cluster_name
+    bastion_ip   = local.bastion_server.ip
+    servers      = local.servers
+    channel      = var.k3s_channel
+    token        = random_password.k3s_token.result
   })
 
   lifecycle {

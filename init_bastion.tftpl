@@ -13,10 +13,4 @@ ${global_runcmd}
   - >
     curl -sfL https://get.k3s.io | INSTALL_K3S_CHANNEL=${channel} K3S_TOKEN=${token} sh -s -
     server --cluster-init
-    --disable=${disabled_services}
-    --flannel-iface=${interface}
-    --node-ip=${node_ip}
-    --node-taint=node-role.kubernetes.io/master:NoSchedule
-%{ for key, value in args ~}
-    --kubelet-arg=${key}=${value}
-%{ endfor ~}
+${global_k3s_config}

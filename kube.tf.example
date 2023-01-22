@@ -25,14 +25,16 @@ module "hcloud-k3s" {
 
   ssh_port = 2222
 
-  cluster_name       = "kube"
+  cluster_name       = "k3s"
   cluster_user       = "kube"
 
-  my_public_ssh_name = "kube"
   my_public_ssh_key  = "ssh-ed25519 xxxxx"
   my_ip_addresses    = ["0.0.0.0/0", "::/0"]
 
   k3s_channel        = "stable"
+
+  disabled_components = ["traefik"]
+  kubelet_args = []
 
   controllers = {
     server_type       = "cx21"

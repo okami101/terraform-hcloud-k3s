@@ -1,25 +1,25 @@
 variable "server_image" {
+  description = "The default OS image to use for the servers"
   type        = string
   default     = "ubuntu-22.04"
-  description = "The default OS image to use for the servers"
 }
 
 variable "server_location" {
+  description = "The default location where to create hcloud resources"
   type        = string
   default     = "nbg1"
-  description = "The default location where to create hcloud resources"
 }
 
 variable "server_timezone" {
+  description = "The default timezone to use for the servers"
   type        = string
   default     = null
-  description = "The default timezone to use for the servers"
 }
 
 variable "server_locale" {
+  description = "The default locale to create hcloud servers"
   type        = string
   default     = null
-  description = "The default locale to create hcloud servers"
 }
 
 variable "server_packages" {
@@ -35,78 +35,80 @@ variable "ssh_port" {
 }
 
 variable "cluster_name" {
+  description = "Used as hostname prefix for all hcloud resources"
   type        = string
-  default     = "kube"
-  description = "Will be used to create the hcloud servers as a hostname prefix and main cluster name for the k3s cluster"
+  default     = "k3s"
 }
 
 variable "cluster_user" {
+  description = "The default non-root user (UID=1000) that will be used for accessing all nodes"
   type        = string
   default     = "kube"
-  description = "The default non-root user (UID=1000) that will be used to access the servers"
-}
-
-variable "my_public_ssh_name" {
-  type        = string
-  default     = "kube"
-  description = "Your public SSH key identifier for the Hetzner Cloud API"
 }
 
 variable "my_public_ssh_key" {
+  description = "Your public SSH key that will be used to access the servers"
   type        = string
   sensitive   = true
-  description = "Your public SSH key that will be used to access the servers"
 }
 
 variable "my_ip_addresses" {
-  type = list(string)
+  description = "Your public IP addresses for port whitelist via the Hetzner firewall configuration"
+  type        = list(string)
   default = [
     "0.0.0.0/0",
     "::/0"
   ]
-  description = "Your public IP addresses for port whitelist via the Hetzner firewall configuration"
 }
 
 variable "k3s_channel" {
-  type        = string
-  default     = "latest"
   description = "K3S channel to use for the installation"
+  type        = string
+  default     = "stable"
 }
 
 variable "controllers" {
+  description = "Size and count of controller servers"
   type = object({
     server_type       = string,
     server_count      = string,
     private_interface = string
   })
-  description = "Size and count of controller servers"
 }
 
 variable "workers" {
+  description = "List of all additional worker types to create for k3s cluster. Each type is identified by specific role and can have a different number of instances. The k3sctl config will be updated as well. If the role is different from 'worker', this node will be tainted for preventing any scheduling from pods without proper tolerations."
   type = list(object({
     role              = string
     server_type       = string
     server_count      = number
     private_interface = string
   }))
-  description = "List of all additional worker types to create for k3s cluster. Each type is identified by specific role and can have a different number of instances. The k3sctl config will be updated as well. If the role is different from 'worker', this node will be tainted for preventing any scheduling from pods without proper tolerations."
 }
 
 variable "lb_services" {
-  type        = list(number)
   description = "List of tcp ports to be load balanced through workers"
+  type        = list(number)
+  default     = [80, 443]
 }
 
 variable "lb_worker_role" {
+  description = "Server role to be load balanced"
   type        = string
   default     = "worker"
-  description = "Server role to be load balanced"
 }
 
 variable "kubelet_args" {
+  description = "Additional arguments for each kubelet service"
   type = list(object({
     key   = string,
     value = string
   }))
-  description = "Additional arguments for kubelet service"
+  default = []
+}
+
+variable "disabled_components" {
+  description = "Components to disable for k3s installation"
+  type        = list(string)
+  default     = []
 }

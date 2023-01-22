@@ -1,0 +1,13 @@
+%{ if role == "controller" ~}
+%{ for component in disabled_components ~}
+    --disable=${component}
+%{ endfor ~}
+%{ endif ~}
+    --flannel-iface=${interface}
+    --node-ip=${node_ip}
+%{ if role != "worker" ~}
+    --node-taint=node-role.kubernetes.io/${role == "controller" ? "master" : role}:NoSchedule
+%{ endif ~}
+%{ for key, value in args ~}
+    --kubelet-arg=${key}=${value}
+%{ endfor ~}
