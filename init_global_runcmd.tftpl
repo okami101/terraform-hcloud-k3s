@@ -4,10 +4,10 @@
   - sed -i "/^PermitRootLogin/s/^.*$/PermitRootLogin no/" /etc/ssh/sshd_config
   - systemctl restart ssh
   - curl -o bootstrap-salt.sh -L https://bootstrap.saltproject.io
-  - >
-    sh bootstrap-salt.sh -i ${minion_id}
 %{ if bastion }
-    -M
+  - sh bootstrap-salt.sh -i ${minion_id} -M
+%{ else }
+  - sh bootstrap-salt.sh -i ${minion_id}
 %{ endif }
-  - 'sed -i "s/#master: salt/master: ${ bastion ? "localhost" : "bastion" }/" /etc/salt/minion'
+  - sed -i "s/#master: salt/master: ${ bastion ? "localhost" : "bastion" }/" /etc/salt/minion
   - systemctl restart salt-minion
