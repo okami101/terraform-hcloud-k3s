@@ -11,5 +11,7 @@ ${global_runcmd}
   - sleep 30
   - >
     curl -sfL https://get.k3s.io | INSTALL_K3S_CHANNEL=${channel} K3S_TOKEN=${token} K3S_URL=https://${bastion_ip}:6443 sh -s -
+%{ if role == "controller" ~}
     server
+%{ endif ~}
 ${global_k3s_config}

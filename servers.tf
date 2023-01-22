@@ -37,10 +37,11 @@ resource "hcloud_server" "servers" {
       args                = { for i, a in var.kubelet_args : a.key => a.value }
     }),
     cluster_name = var.cluster_name
-    bastion_ip   = local.bastion_server.ip
     servers      = local.servers
     channel      = var.k3s_channel
     token        = random_password.k3s_token.result
+    bastion_ip   = local.bastion_server.ip
+    role         = each.value.role
   })
 
   lifecycle {
