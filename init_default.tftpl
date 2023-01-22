@@ -1,0 +1,24 @@
+${global_cloud_config}
+
+write_files:
+  - path: /etc/hosts
+    content: |
+      ${controller_ip} bastion
+    append: true
+
+runcmd:
+${global_runcmd}
+  - sleep 30
+  - >
+    curl -sfL https://get.k3s.io | INSTALL_K3S_CHANNEL=${channel} K3S_TOKEN=${token} K3S_URL=https://${controller_ip}:6443 sh -s -
+%{ if role == "controller" ~}
+    server --disable=${disabled_services}
+%{ endif ~}
+    --flannel-iface=${interface}
+    --node-ip=${node_ip}
+%{ if role != "worker" ~}
+    --node-taint=node-role.kubernetes.io/${role == "controller" ? "master" : role}:NoSchedule
+%{ endif ~}
+%{ for key, value in args ~}
+    --kubelet-arg=${key}=${value}
+%{ endfor ~}

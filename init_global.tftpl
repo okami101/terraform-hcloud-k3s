@@ -1,0 +1,23 @@
+#cloud-config
+users:
+  - name: ${cluster_user}
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    shell: /bin/bash
+    ssh_authorized_keys:
+      - ${public_ssh_key}
+
+%{ if server_timezone != null ~}
+timezone: ${server_timezone}
+%{ endif ~}
+%{ if server_locale != null ~}
+locale: ${server_locale}
+%{ endif ~}
+package_update: true
+package_upgrade: true
+package_reboot_if_required: true
+manage_etc_hosts: false
+
+packages:
+%{ for package in server_packages ~}
+  - ${package}
+%{ endfor ~}
