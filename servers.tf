@@ -23,6 +23,7 @@ resource "hcloud_server" "servers" {
     cluster_user        = var.cluster_user
     public_ssh_key      = var.my_public_ssh_key
     channel             = var.k3s_channel
+    tls_sans            = var.tls_sans
     token               = random_password.k3s_token.result
     bastion_ip          = local.bastion_server.ip
     is_bastion          = each.value.name == local.bastion_server_name

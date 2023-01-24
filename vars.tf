@@ -67,6 +67,12 @@ variable "k3s_channel" {
   default     = "stable"
 }
 
+variable "tls_sans" {
+  description = "Additional TLS SANs to use for the k3s installation"
+  type        = list(string)
+  default     = []
+}
+
 variable "kubelet_args" {
   description = "Additional arguments for each kubelet service"
   type = list(object({

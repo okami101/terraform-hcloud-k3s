@@ -52,6 +52,9 @@ runcmd:
 %{ for component in disabled_components ~}
     --disable=${component}
 %{ endfor ~}
+%{ for tls_san in tls_sans ~}
+    --tls-san=${tls_san}
+%{ endfor ~}
 %{ endif ~}
     --flannel-iface=${interface}
     --node-ip=${node_ip}
