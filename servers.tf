@@ -16,25 +16,29 @@ resource "hcloud_server" "servers" {
     hcloud_network_subnet.network_subnet
   ]
   user_data = templatefile("${path.module}/cloud-init.tftpl", {
-    server_timezone     = var.server_timezone
-    server_locale       = var.server_locale
-    server_packages     = var.server_packages
-    cluster_name        = var.cluster_name
-    cluster_user        = var.cluster_user
-    public_ssh_key      = var.my_public_ssh_key
-    channel             = var.k3s_channel
-    tls_sans            = var.tls_sans
-    token               = random_password.k3s_token.result
-    bastion_ip          = local.bastion_server.ip
-    is_bastion          = each.value.name == local.bastion_server_name
-    ssh_port            = var.ssh_port
-    minion_id           = each.value.name
-    disabled_components = var.disabled_components
-    interface           = each.value.private_interface
-    node_ip             = each.value.ip
-    role                = each.value.role
-    taints              = each.value.taints
-    args                = { for i, a in var.kubelet_args : a.key => a.value }
+    server_timezone = var.server_timezone
+    server_locale   = var.server_locale
+    server_packages = var.server_packages
+    cluster_name    = var.cluster_name
+    cluster_user    = var.cluster_user
+    public_ssh_key  = var.my_public_ssh_key
+    channel         = var.k3s_channel
+    tls_sans        = var.tls_sans
+    token           = random_password.k3s_token.result
+    bastion_ip      = local.bastion_server.ip
+    is_bastion      = each.value.name == local.bastion_server_name
+    ssh_port        = var.ssh_port
+    minion_id       = each.value.name
+    is_server       = each.value.role == "controller"
+    k3s_config = base64encode(yamlencode(merge(each.value.role == "controller" ? {
+      "disable" : var.disabled_components
+      "tls-san" : var.tls_sans
+      } : {}, {
+      "flannel-iface" : each.value.private_interface
+      "node-ip" : each.value.ip
+      "node-taint" : each.value.taints
+      "kubelet-arg" : var.kubelet_args
+    })))
   })
 
   lifecycle {

@@ -75,11 +75,8 @@ variable "tls_sans" {
 
 variable "kubelet_args" {
   description = "Additional arguments for each kubelet service"
-  type = list(object({
-    key   = string,
-    value = string
-  }))
-  default = []
+  type        = list(string)
+  default     = []
 }
 
 variable "disabled_components" {
