@@ -22,15 +22,6 @@ resource "hcloud_load_balancer_network" "lb_network" {
   ip               = "10.0.0.100"
 }
 
-resource "hcloud_load_balancer_service" "lb_services" {
-  for_each         = { for i, s in var.lb_services : s.port => s }
-  load_balancer_id = hcloud_load_balancer.lb.id
-  protocol         = coalesce(each.value.protocol, "http")
-  listen_port      = each.value.port
-  destination_port = each.value.target_port
-  proxyprotocol    = coalesce(each.value.proxyprotocol, false)
-}
-
 resource "hcloud_load_balancer_target" "lb_targets" {
   for_each         = { for i, t in local.servers : t.name => t if t.role == var.lb_target }
   type             = "server"

@@ -116,14 +116,3 @@ variable "lb_target" {
   description = "Nodepool to be load balanced"
   type        = string
 }
-
-variable "lb_services" {
-  description = "List of tcp ports to be load balanced through workers"
-  type = list(object({
-    port          = number
-    target_port   = number
-    protocol      = optional(string)
-    proxyprotocol = optional(bool)
-  }))
-  default = []
-}

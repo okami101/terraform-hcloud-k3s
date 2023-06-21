@@ -64,6 +64,7 @@ Once terraform installation is complete, terraform will output the SSH config ne
 | `bastion_ip`     | Bastion IP for OS and Kubernetes management             |
 | `controller_ips` | All available IPs controllers for Kubernetes API access |
 | `lb_ip`          | Load Balancer IP to use for any external public access  |
+| `lb_id`          | Load Balancer ID to use for attaching any services      |
 
 Copy the SSH config to your own SSH config, default to `~/.ssh/config`. After few minutes, you can use `ssh <cluster_name>` in order to log in to your main control plane node. For other nodes, the control plane will be used as a bastion for direct access to other nodes, so use `ssh <cluster_name>-worker-01` to directly access to your *worker-01* node.
 

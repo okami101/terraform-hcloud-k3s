@@ -13,6 +13,11 @@ output "controller_ips" {
   description = "Public ip address of the controllers"
 }
 
+output "lb_id" {
+  value       = hcloud_load_balancer.lb.id
+  description = "ID of this load balancer, use for define services into it"
+}
+
 output "lb_ip" {
   value       = hcloud_load_balancer.lb.ipv4
   description = "Public ip address of the load balancer, use this IP as main HTTPS entrypoint through your worker nodes"

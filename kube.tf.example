@@ -11,7 +11,7 @@ provider "hcloud" {
   token = "xxxxxx"
 }
 
-module "hcloud-k3s" {
+module "hcloud_k3s" {
   providers = {
     hcloud = hcloud
   }
@@ -95,41 +95,35 @@ module "hcloud-k3s" {
   lb_type = "lb11"
   # The above nodepool to be load balanced. These nodes should have a proper ingress controller installed, as traefik.
   lb_target = "worker"
-  # The load balancer services to be created.
-  lb_services = [
-    {
-      # The port to be exposed.
-      port = 80,
-      # The target port to be forwarded to.
-      target_port = 80,
-      # The layer protocol to be used, http by default.
-      protocol = "tcp"
-    },
-    {
-      port = 443,
-      target_port = 443,
-      # Important note when HTTPS :
-      # Use HTTP for SSL Termination. Certificates must be managed directly on Hetzner Load Balancer.
-      # Use TCP for SSL Passthrough. Certificates must be managed directly on k3s ingress controller.
-      protocol = "tcp",
-      # The proxyprotocol is required to be able to get the real client IP address. Can work on both HTTP and TCP. Targetted ingress controller must support it.
-      proxyprotocol = true
-    }
-  ]
+}
+
+resource "hcloud_load_balancer_service" "http_service" {
+  load_balancer_id = module.hcloud_k3s.lb_id
+  protocol         = "tcp"
+  listen_port      = 80
+  destination_port = 80
+}
+
+resource "hcloud_load_balancer_service" "https_service" {
+  load_balancer_id = module.hcloud_k3s.lb_id
+  protocol         = "tcp"
+  listen_port      = 443
+  destination_port = 443
+  proxyprotocol    = true
 }
 
 output "bastion_ip" {
-  value = module.hcloud-k3s.bastion_ip
+  value = module.hcloud_k3s.bastion_ip
 }
 
 output "controller_ips" {
-  value = module.hcloud-k3s.controller_ips
+  value = module.hcloud_k3s.controller_ips
 }
 
 output "lb_ip" {
-  value = module.hcloud-k3s.lb_ip
+  value = module.hcloud_k3s.lb_ip
 }
 
 output "ssh_config" {
-  value = module.hcloud-k3s.ssh_config
+  value = module.hcloud_k3s.ssh_config
 }
