@@ -28,6 +28,7 @@ output "ssh_config" {
   value = templatefile("${path.module}/ssh.config.tftpl", {
     cluster_name = var.cluster_name
     cluster_user = var.cluster_user
+    ssh_port     = var.ssh_port
     bastion_ip   = hcloud_server.servers[local.bastion_server_name].ipv4_address
     servers      = local.servers
   })
