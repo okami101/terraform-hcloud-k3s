@@ -4,7 +4,7 @@ output "servers" {
 }
 
 output "bastion_ip" {
-  value       = hcloud_server.servers[local.bastion_server_name].ipv4_address
+  value       = local.bastion_ip
   description = "Public ip address of the bastion, link this IP to connection to your bastion server"
 }
 
@@ -29,7 +29,7 @@ output "ssh_config" {
     cluster_name = var.cluster_name
     cluster_user = var.cluster_user
     ssh_port     = var.ssh_port
-    bastion_ip   = hcloud_server.servers[local.bastion_server_name].ipv4_address
+    bastion_ip   = local.bastion_ip
     servers      = local.servers
   })
 }

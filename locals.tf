@@ -25,4 +25,5 @@ locals {
   ])
   bastion_server_name = "controller-01"
   bastion_server      = one([for s in local.servers : s if s.name == local.bastion_server_name])
+  bastion_ip          = hcloud_server.servers[local.bastion_server_name].ipv4_address
 }
