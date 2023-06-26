@@ -12,7 +12,7 @@ Check [Kube-Hetzner](https://github.com/kube-hetzner/terraform-hcloud-kube-hetzn
 
 ### Networking and firewall
 
-All nodes including LB will be linked with a proper private network as well as **solid firewall protection**. For admine management, only the 1st main control plane (bastion) node will have open ports for SSH (configurable) and kube-apiserver (port **6443**), with **IP whitelist** support. Other internal nodes will be accessed by SSH Jump.
+All nodes including LB will be linked with a proper private network as well as **solid firewall protection**. For admin management, only the 1st main control plane (bastion) node will have open ports for SSH (configurable) and kube-apiserver (port **6443**), with **IP whitelist** support. Other internal nodes will be accessed by SSH Jump.
 
 Hetzner Load Balancer will be used for any external public access to your cluster.
 
