@@ -1,5 +1,5 @@
 locals {
-  servers = flatten([
+  servers = concat(
     [
       for i in range(var.control_planes.count) : {
         name              = "controller-${format("%02d", i + 1)}"
@@ -22,7 +22,7 @@ locals {
         }
       ]
     ])
-  ])
+  )
   bastion_server_name = "controller-01"
   bastion_server      = one([for s in local.servers : s if s.name == local.bastion_server_name])
   bastion_ip          = hcloud_server.servers[local.bastion_server_name].ipv4_address
