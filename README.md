@@ -50,8 +50,8 @@ Now it's time for initial cluster setup.
 
 1. Copy [this kube config example](kube.tf.example) into a new empty directory and rename it `kube.tf`.
 2. Execute `terraform init` in order to install the required module
-3. Replace all variables according you own needs.
-4. Finally use `terraform apply` to check the plan and initiate the cluster setup.
+3. Replace all variables according your own needs.
+4. Finally, use `terraform apply` to check the plan and initiate the cluster setup.
 
 ## Usage
 
