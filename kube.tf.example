@@ -52,6 +52,15 @@ module "hcloud_k3s" {
   # All advanced parameters for each kubelet, see https://kubernetes.io/docs/reference/command-line-tools-reference/kubelet/.
   kubelet_args = []
 
+  # Add s3 backup for etcd.
+  etcd_s3_backup = {
+    etcd-s3-endpoint            = "xxxxxx.r2.cloudflarestorage.com"
+    etcd-s3-access-key          = "xxxxxx"
+    etcd-s3-secret-key          = "xxxxxx"
+    etcd-s3-bucket              = "xxxxxx"
+    etcd-snapshot-schedule-cron = "0 0 * * *"
+  }
+
   control_planes = {
     server_type = "cx21"
     # In hetzner, private_interface is the interface name for private network, ens10 is the default one for intel nics, enp7s0 for amd nics.

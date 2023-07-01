@@ -79,6 +79,13 @@ variable "kubelet_args" {
   default     = []
 }
 
+variable "etcd_s3_backup" {
+  description = "S3 backup configuration for etcd"
+  type        = map(any)
+  sensitive   = true
+  default     = {}
+}
+
 variable "disabled_components" {
   description = "Components to disable for k3s installation"
   type        = list(string)

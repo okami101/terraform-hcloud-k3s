@@ -26,4 +26,13 @@ locals {
   bastion_server_name = "controller-01"
   bastion_server      = one([for s in local.servers : s if s.name == local.bastion_server_name])
   bastion_ip          = hcloud_server.servers[local.bastion_server_name].ipv4_address
+  k3s_server_config = {
+    disable = var.disabled_components
+    tls-san = var.tls_sans
+  }
+  etcd_s3_snapshots = length(keys(var.etcd_s3_backup)) > 0 ? merge(
+    {
+      etcd-s3 = true
+    },
+  var.etcd_s3_backup) : {}
 }

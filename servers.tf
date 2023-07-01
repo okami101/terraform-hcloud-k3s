@@ -23,22 +23,24 @@ resource "hcloud_server" "servers" {
     cluster_user    = var.cluster_user
     public_ssh_key  = var.my_public_ssh_key
     channel         = var.k3s_channel
-    tls_sans        = var.tls_sans
     token           = random_password.k3s_token.result
     bastion_ip      = local.bastion_server.ip
     is_bastion      = each.value.name == local.bastion_server_name
     ssh_port        = var.ssh_port
     minion_id       = each.value.name
     is_server       = each.value.role == "controller"
-    k3s_config = base64encode(yamlencode(merge(each.value.role == "controller" ? {
-      "disable" : var.disabled_components
-      "tls-san" : var.tls_sans
-      } : {}, {
-      "flannel-iface" : each.value.private_interface
-      "node-ip" : each.value.ip
-      "node-taint" : each.value.taints
-      "kubelet-arg" : var.kubelet_args
-    })))
+    k3s_config = base64encode(yamlencode(
+      merge(
+        each.value.role == "controller" ? local.k3s_server_config : {},
+        each.value.role == "controller" ? local.etcd_s3_snapshots : {},
+        {
+          flannel-iface = each.value.private_interface
+          node-ip       = each.value.ip
+          node-taint    = each.value.taints
+          kubelet-arg   = var.kubelet_args
+        }
+      )
+    ))
   })
 
   lifecycle {
