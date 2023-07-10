@@ -10,6 +10,8 @@ Additional controllers and workers can be easily added thanks to terraform varia
 
 Check [Kube-Hetzner](https://github.com/kube-hetzner/terraform-hcloud-kube-hetzner) for a more advanced setup with Hetzner Cloud with optimized OS for containers workload. This project uses only OS supported by Hetzner and intends to be far more lightweight without any local/remote exec provisioners (only cloud-init), quicker to set up, and Windows compatible.
 
+> I will always insist that you may not need Kubernetes. For any personal usage and apart from K8S learning, the [Swarm provider](https://github.com/okami101/terraform-hcloud-swarm) should be a better fit, as it's a far more lightweight orchestrator, whether in terms of machine resources (even it's K3s) or human brain.
+
 ### Networking and firewall
 
 All nodes including LB will be linked with a proper private network as well as **solid firewall protection**. For admin management, only the 1st main control plane (bastion) node will have open ports for SSH (configurable) and kube-apiserver (port **6443**), with **IP whitelist** support. Other internal nodes will be accessed by SSH Jump.
@@ -88,6 +90,141 @@ You can easily add or remove nodes by changing the `count` variable of each pool
 
 * When adding, the K3S server or agent will be automatically added to the cluster and ready to use. Don't forget to accept the new minion with `sudo salt-key -A`.
 * When removing, you should manually drain and delete node before removing the node with `sudo kubectl drain --ignore-daemonsets <cluster_name>-<pool>-<count>` and `sudo kubectl delete nodes <cluster_name>-<pool>-<count>`. Then use `terraform apply` to delete the node physically.
+
+## Topologies
+
+Contrary to Docker Swarm which is very flexible at low prices, with many topologies possible [as explained here](https://github.com/okami101/terraform-hcloud-swarm#topologies), K8S is really thought out for HA and high horizontal scalability, with complex workloads. So I will only present the typical HA topology for K8S based on following config :
+
+```tf
+# ...
+control_planes = {
+  #...
+  count = 3
+  taints = [
+    "node-role.kubernetes.io/master:NoSchedule"
+  ]
+}
+
+agent_nodepools = [
+  {
+    name = "web"
+    #...
+    count = 2
+    taints = [
+      "node-role.kubernetes.io/web:NoSchedule"
+    ]
+  },
+  {
+    name = "worker"
+    #...
+    count = 3
+    taints = []
+  },
+  {
+    name = "data"
+    #...
+    count = 2
+    taints = [
+      "node-role.kubernetes.io/data:NoSchedule"
+    ]
+  }
+]
+
+lb_target = "web"
+# ...
+```
+
+### For administrators
+
+Note as the LB for admin panel (which is not the same as the main frontal LB) is not included in this provider, but can be easily added separately. A round-robin DNS can be used as well.
+
+```mermaid
+flowchart TB
+admin((Kubectl + SSH))
+admin -- Port 2222 + 6443 --> lb{LB}
+lb{LB}
+subgraph controller-01
+  kube-apiserver-01([Kube API Server])
+  etcd-01[(ETCD)]
+  kube-apiserver-01 --> etcd-01
+end
+subgraph controller-02
+  kube-apiserver-02([Kube API Server])
+  etcd-02[(ETCD)]
+  kube-apiserver-02 --> etcd-02
+end
+subgraph controller-03
+  kube-apiserver-03([Kube API Server])
+  etcd-03[(ETCD)]
+  kube-apiserver-03 --> etcd-03
+end
+lb -- Port 2222 + 6443 --> kube-apiserver-01
+lb -- Port 2222 + 6443 --> kube-apiserver-02
+lb -- Port 2222 + 6443 --> kube-apiserver-03
+```
+
+### For clients
+
+Next is a complete HA topology from top to bottom, with 3 controllers, 2 web nodes for traefik routing behind the LB, 3 workers supersided with Longhorn for replicated persistence, and 2 data nodes with replicated DB. Traefik can be merged to workers if you don't plan to have plenty of workers.
+
+```mermaid
+flowchart TB
+client((Client))
+client -- Port 80 + 443 --> lb{LB}
+lb{LB}
+lb -- Port 80 --> traefik-01
+lb -- Port 80 --> traefik-02
+subgraph web-01
+  traefik-01{Traefik}
+end
+subgraph web-02
+  traefik-02{Traefik}
+end
+overlay-web(Web overlay network)
+traefik-01 --> overlay-web
+traefik-02 --> overlay-web
+subgraph worker-01
+  direction TB
+  app-01([My App replica 1])
+  longhorn-01[(Longhorn<br>replica 1)]
+  app-01 --> longhorn-01
+end
+subgraph worker-02
+  direction TB
+  app-02([My App replica 2])
+  longhorn-02[(Longhorn<br>replica 2)]
+  app-02 --> longhorn-02
+end
+subgraph worker-03
+  direction TB
+  app-03([My App replica 3])
+  longhorn-03[(Longhorn<br>replica 3)]
+  app-03 --> longhorn-03
+end
+overlay-db(DB overlay network)
+overlay-web --> worker-01
+overlay-web --> worker-02
+overlay-web --> worker-03
+worker-01 --> overlay-db
+worker-02 --> overlay-db
+worker-03 --> overlay-db
+overlay-db --> db-rw
+overlay-db --> db-ro
+db-rw{RW SVC}
+db-rw -- Port 5432 --> pg-primary
+db-ro{RO SVC}
+db-ro -- Port 5432 --> pg-primary
+db-ro -- Port 5432 --> pg-replica
+subgraph data-01
+  pg-primary([PostgreSQL primary])
+end
+subgraph data-02
+  pg-replica([PostgreSQL replica])
+end
+db-streaming(streaming replication)
+pg-primary --> db-streaming
+pg-replica --> db-streaming
+```
 
 ## 📝 License
 
