@@ -57,3 +57,12 @@ resource "hcloud_server_network" "servers" {
   network_id = hcloud_network.network.id
   ip         = each.value.ip
 }
+
+resource "hcloud_volume" "volumes" {
+  for_each  = { for i, s in local.servers : s.name => s if s.volume_size >= 10 }
+  name      = "${var.cluster_name}-volume-${each.key}"
+  size      = each.value.volume_size
+  server_id = hcloud_server.servers[each.key].id
+  automount = true
+  format    = "ext4"
+}

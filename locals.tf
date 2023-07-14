@@ -8,6 +8,7 @@ locals {
         ip                = "10.0.0.${i + 2}"
         role              = "controller"
         taints            = var.control_planes.taints
+        volume_size       = 0
       }
     ],
     flatten([
@@ -19,6 +20,7 @@ locals {
           ip                = "10.0.${coalesce(s.private_ip_index, i) + 1}.${j + 1}"
           role              = s.name
           taints            = s.taints
+          volume_size       = s.volume_size != null ? s.volume_size : 0
         }
       ]
     ])

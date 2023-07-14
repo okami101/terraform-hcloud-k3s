@@ -83,9 +83,11 @@ module "hcloud_k3s" {
       # You can use next optional attribute to define the range private IP index for the nodepool. It allows to move items in the list without breaking the IP range.
       private_ip_index  = 0
       # The number of nodes in this pool. The main parameter for autoscaling.
-      count = 3
+      count             = 3
       # No taint, can accept any workloads.
-      taints = []
+      taints            = []
+      # Volume can be optionally set if need a volume on each node of this pool
+      volume_size       = 20
     },
     {
       # Here is an example of a nodepool with a different server type, and a taint. Typically used for database oriented nodes.
