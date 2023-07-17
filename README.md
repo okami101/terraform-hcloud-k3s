@@ -203,23 +203,23 @@ worker-03 --> overlay
 overlay --> db-rw
 overlay --> db-ro
 db-rw((RW SVC))
-db-rw -- Port 5432 --> data-01
+db-rw -- Port 5432 --> storage-01
 db-ro((RO SVC))
-db-ro -- Port 5432 --> data-01
-db-ro -- Port 5432 --> data-02
-subgraph data-01
+db-ro -- Port 5432 --> storage-01
+db-ro -- Port 5432 --> storage-02
+subgraph storage-01
   pg-primary([PostgreSQL primary])
   longhorn-01[(Longhorn<br>replica 1)]
   pg-primary --> longhorn-01
 end
-subgraph data-02
+subgraph storage-02
   pg-replica([PostgreSQL replica])
   longhorn-02[(Longhorn<br>replica 2)]
   pg-replica --> longhorn-02
 end
 db-streaming(streaming replication)
-data-01 --> db-streaming
-data-02 --> db-streaming
+storage-01 --> db-streaming
+storage-02 --> db-streaming
 ```
 
 ## 📝 License
