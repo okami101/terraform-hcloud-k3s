@@ -144,86 +144,82 @@ admin((Kubectl + SSH))
 admin -- Port 2222 + 6443 --> lb{LB}
 lb{LB}
 subgraph controller-01
+  direction TB
   kube-apiserver-01([Kube API Server])
   etcd-01[(ETCD)]
   kube-apiserver-01 --> etcd-01
 end
 subgraph controller-02
+  direction TB
   kube-apiserver-02([Kube API Server])
   etcd-02[(ETCD)]
   kube-apiserver-02 --> etcd-02
 end
 subgraph controller-03
+  direction TB
   kube-apiserver-03([Kube API Server])
   etcd-03[(ETCD)]
   kube-apiserver-03 --> etcd-03
 end
-lb -- Port 2222 + 6443 --> kube-apiserver-01
-lb -- Port 2222 + 6443 --> kube-apiserver-02
-lb -- Port 2222 + 6443 --> kube-apiserver-03
+lb -- Port 2222 + 6443 --> controller-01
+lb -- Port 2222 + 6443 --> controller-02
+lb -- Port 2222 + 6443 --> controller-03
 ```
 
 ### For clients
 
-Next is a complete HA topology from top to bottom, with 3 controllers, 2 web nodes for traefik routing behind the LB, 3 workers supersided with Longhorn for replicated persistence, and 2 data nodes with replicated DB. Traefik can be merged to workers if you don't plan to have plenty of workers.
+Next is a typical HA topology, with 3 load-balanced workers, and 2 storage nodes with replicated DB and replicated storage via Longhorn.
 
 ```mermaid
 flowchart TB
 client((Client))
 client -- Port 80 + 443 --> lb{LB}
 lb{LB}
-lb -- Port 80 --> traefik-01
-lb -- Port 80 --> traefik-02
-subgraph web-01
-  traefik-01{Traefik}
-end
-subgraph web-02
-  traefik-02{Traefik}
-end
-overlay-web(Web overlay network)
-traefik-01 --> overlay-web
-traefik-02 --> overlay-web
+lb -- Port 80 --> worker-01
+lb -- Port 80 --> worker-02
+lb -- Port 80 --> worker-03
 subgraph worker-01
   direction TB
+  traefik-01{Traefik}
   app-01([My App replica 1])
-  longhorn-01[(Longhorn<br>replica 1)]
-  app-01 --> longhorn-01
+  traefik-01 --> app-01
 end
 subgraph worker-02
   direction TB
+  traefik-02{Traefik}
   app-02([My App replica 2])
-  longhorn-02[(Longhorn<br>replica 2)]
-  app-02 --> longhorn-02
+  traefik-02 --> app-02
 end
 subgraph worker-03
   direction TB
+  traefik-03{Traefik}
   app-03([My App replica 3])
-  longhorn-03[(Longhorn<br>replica 3)]
-  app-03 --> longhorn-03
+  traefik-03 --> app-03
 end
-overlay-db(DB overlay network)
-overlay-web --> worker-01
-overlay-web --> worker-02
-overlay-web --> worker-03
-worker-01 --> overlay-db
-worker-02 --> overlay-db
-worker-03 --> overlay-db
-overlay-db --> db-rw
-overlay-db --> db-ro
-db-rw{RW SVC}
-db-rw -- Port 5432 --> pg-primary
-db-ro{RO SVC}
-db-ro -- Port 5432 --> pg-primary
-db-ro -- Port 5432 --> pg-replica
+overlay(Overlay network)
+worker-01 --> overlay
+worker-02 --> overlay
+worker-03 --> overlay
+overlay --> db-rw
+overlay --> db-ro
+db-rw((RW SVC))
+db-rw -- Port 5432 --> data-01
+db-ro((RO SVC))
+db-ro -- Port 5432 --> data-01
+db-ro -- Port 5432 --> data-02
 subgraph data-01
   pg-primary([PostgreSQL primary])
+  longhorn-01[(Longhorn<br>replica 1)]
+  pg-primary --> longhorn-01
 end
 subgraph data-02
   pg-replica([PostgreSQL replica])
+  longhorn-02[(Longhorn<br>replica 2)]
+  pg-replica --> longhorn-02
 end
 db-streaming(streaming replication)
-pg-primary --> db-streaming
-pg-replica --> db-streaming
+data-01 --> db-streaming
+data-02 --> db-streaming
 ```
 
 ## 📝 License
