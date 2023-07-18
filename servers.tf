@@ -36,6 +36,7 @@ resource "hcloud_server" "servers" {
         {
           flannel-iface = each.value.private_interface
           node-ip       = each.value.ip
+          node-label    = each.value.labels
           node-taint    = each.value.taints
           kubelet-arg   = var.kubelet_args
         }

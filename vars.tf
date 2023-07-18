@@ -98,6 +98,7 @@ variable "control_planes" {
     server_type       = string,
     private_interface = string
     count             = string,
+    labels            = list(string)
     taints            = list(string)
   })
 }

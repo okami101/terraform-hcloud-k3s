@@ -107,26 +107,19 @@ control_planes = {
 
 agent_nodepools = [
   {
-    name = "web"
-    #...
-    count = 2
-    taints = [
-      "node-role.kubernetes.io/web:NoSchedule"
-    ]
-  },
-  {
     name = "worker"
     #...
     count = 3
     taints = []
   },
   {
-    name = "data"
+    name = "storage"
     #...
     count = 2
     taints = [
-      "node-role.kubernetes.io/data:NoSchedule"
-    ]
+      "node-role.kubernetes.io/storage:NoSchedule"
+    ],
+    volume_size = 20
   }
 ]
 
@@ -140,8 +133,10 @@ Note as the LB for admin panel (which is not the same as the main frontal LB) is
 
 ```mermaid
 flowchart TB
-admin((Kubectl + SSH))
-admin -- Port 2222 + 6443 --> lb{LB}
+ssh((SSH))
+kubectl((Kubectl))
+kubectl -- Port 6443 --> lb{LB}
+ssh -- Port 2222 --> controller-01
 lb{LB}
 subgraph controller-01
   direction TB
@@ -161,9 +156,9 @@ subgraph controller-03
   etcd-03[(ETCD)]
   kube-apiserver-03 --> etcd-03
 end
-lb -- Port 2222 + 6443 --> controller-01
-lb -- Port 2222 + 6443 --> controller-02
-lb -- Port 2222 + 6443 --> controller-03
+lb -- Port 6443 --> controller-01
+lb -- Port 6443 --> controller-02
+lb -- Port 6443 --> controller-03
 ```
 
 ### For clients
@@ -209,15 +204,15 @@ db-ro -- Port 5432 --> storage-01
 db-ro -- Port 5432 --> storage-02
 subgraph storage-01
   pg-primary([PostgreSQL primary])
-  longhorn-01[(Longhorn<br>replica 1)]
+  longhorn-01[(Longhorn<br>volume)]
   pg-primary --> longhorn-01
 end
 subgraph storage-02
   pg-replica([PostgreSQL replica])
-  longhorn-02[(Longhorn<br>replica 2)]
+  longhorn-02[(Longhorn<br>volume)]
   pg-replica --> longhorn-02
 end
-db-streaming(streaming replication)
+db-streaming(Streaming replication)
 storage-01 --> db-streaming
 storage-02 --> db-streaming
 ```
