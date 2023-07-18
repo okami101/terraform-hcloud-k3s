@@ -7,6 +7,7 @@ locals {
         private_interface = var.control_planes.private_interface
         ip                = "10.0.0.${i + 2}"
         role              = "controller"
+        labels            = var.control_planes.labels
         taints            = var.control_planes.taints
         volume_size       = 0
       }
@@ -19,6 +20,7 @@ locals {
           private_interface = s.private_interface
           ip                = "10.0.${coalesce(s.private_ip_index, i) + 1}.${j + 1}"
           role              = s.name
+          labels            = s.labels
           taints            = s.taints
           volume_size       = s.volume_size != null ? s.volume_size : 0
         }

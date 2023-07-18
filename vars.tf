@@ -111,6 +111,7 @@ variable "agent_nodepools" {
     private_interface = string
     private_ip_index  = optional(number)
     count             = number
+    labels            = list(string)
     taints            = list(string)
     volume_size       = optional(number)
   }))
