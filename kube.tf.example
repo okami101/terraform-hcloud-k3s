@@ -97,7 +97,7 @@ module "hcloud_k3s" {
       private_ip_index  = 1
       count             = 1
       labels = [
-        "node-role.kubernetes.io/storage=true"
+        "node.kubernetes.io/server-usage=storage"
       ]
       taints = [
         "node-role.kubernetes.io/storage:NoSchedule"
