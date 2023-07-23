@@ -10,6 +10,12 @@ variable "server_location" {
   default     = "nbg1"
 }
 
+variable "network_zone" {
+  description = "The network zone where to attach hcloud resources"
+  type        = string
+  default     = "eu-central"
+}
+
 variable "server_timezone" {
   description = "The default timezone to use for the servers"
   type        = string
