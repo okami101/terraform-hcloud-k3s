@@ -52,9 +52,14 @@ variable "cluster_user" {
   default     = "kube"
 }
 
-variable "my_public_ssh_key" {
-  description = "Your public SSH key that will be used to access the servers"
-  type        = string
+variable "my_ssh_key_names" {
+  description = "List of hcloud SSH key names that will be used to access the servers"
+  type        = list(string)
+}
+
+variable "my_public_ssh_keys" {
+  description = "Your public SSH keys that will be used to access the servers"
+  type        = list(string)
   sensitive   = true
 }
 

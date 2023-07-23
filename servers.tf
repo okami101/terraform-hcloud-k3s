@@ -9,9 +9,7 @@ resource "hcloud_server" "servers" {
     each.value.name == local.bastion_server_name ? [hcloud_firewall.firewall_bastion.id] : [],
     each.value.role == "controller" ? [hcloud_firewall.firewall_controllers.id] : []
   )
-  ssh_keys = [
-    var.cluster_user
-  ]
+  ssh_keys = var.my_ssh_key_names
   depends_on = [
     hcloud_network_subnet.network_subnet
   ]
@@ -21,7 +19,7 @@ resource "hcloud_server" "servers" {
     server_packages = var.server_packages
     cluster_name    = var.cluster_name
     cluster_user    = var.cluster_user
-    public_ssh_key  = var.my_public_ssh_key
+    public_ssh_keys = var.my_public_ssh_keys
     channel         = var.k3s_channel
     token           = random_password.k3s_token.result
     bastion_ip      = local.bastion_server.ip
