@@ -24,12 +24,12 @@ output "controller_ips" {
 }
 
 output "lb_id" {
-  value       = hcloud_load_balancer.lb.id
+  value       = var.lb_type == null ? null : hcloud_load_balancer.lb[0].id
   description = "ID of this load balancer, use for define services into it"
 }
 
 output "lb_ip" {
-  value       = hcloud_load_balancer.lb.ipv4
+  value       = var.lb_type == null ? null : hcloud_load_balancer.lb[0].ipv4
   description = "Public ip address of the load balancer, use this IP as main HTTPS entrypoint through your worker nodes"
 }
 

@@ -11,13 +11,15 @@ resource "hcloud_network_subnet" "network_subnet" {
 }
 
 resource "hcloud_load_balancer" "lb" {
+  count              = var.lb_type == null ? 0 : 1
   name               = "${var.cluster_name}-lb"
   load_balancer_type = var.lb_type
   location           = var.server_location
 }
 
 resource "hcloud_load_balancer_network" "lb_network" {
-  load_balancer_id = hcloud_load_balancer.lb.id
+  count            = var.lb_type == null ? 0 : 1
+  load_balancer_id = hcloud_load_balancer.lb[0].id
   network_id       = hcloud_network.network.id
   ip               = "10.0.0.100"
 }
@@ -25,7 +27,7 @@ resource "hcloud_load_balancer_network" "lb_network" {
 resource "hcloud_load_balancer_target" "lb_targets" {
   for_each         = { for i, t in local.servers : t.name => t if t.role == var.lb_target }
   type             = "server"
-  load_balancer_id = hcloud_load_balancer.lb.id
+  load_balancer_id = hcloud_load_balancer.lb[0].id
   server_id        = hcloud_server.servers[each.key].id
   use_private_ip   = true
 

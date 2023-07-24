@@ -131,9 +131,11 @@ variable "agent_nodepools" {
 variable "lb_type" {
   description = "Server type of load balancer"
   type        = string
+  default     = null
 }
 
 variable "lb_target" {
   description = "Nodepool to be load balanced"
   type        = string
+  default     = null
 }

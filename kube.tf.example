@@ -114,7 +114,7 @@ module "hcloud_k3s" {
     }
   ]
 
-  # The type of load balancer.
+  # The type of load balancer. Remove lb_* variables to install cluster without LB.
   lb_type = "lb11"
   # The above nodepool to be load balanced. These nodes should have a proper ingress controller installed, as traefik.
   lb_target = "worker"
