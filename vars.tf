@@ -127,15 +127,3 @@ variable "agent_nodepools" {
     volume_size       = optional(number)
   }))
 }
-
-variable "lb_type" {
-  description = "Server type of load balancer"
-  type        = string
-  default     = null
-}
-
-variable "lb_target" {
-  description = "Nodepool to be load balanced"
-  type        = string
-  default     = null
-}

@@ -1,16 +1,6 @@
-output "servers" {
-  value       = local.servers
-  description = "List of servers"
-}
-
 output "network_id" {
   value       = hcloud_network.network.id
-  description = "ID of the private firewall"
-}
-
-output "firewall_private_id" {
-  value       = hcloud_firewall.firewall_private.id
-  description = "ID of the private firewall"
+  description = "ID of the private network"
 }
 
 output "bastion_ip" {
@@ -23,14 +13,16 @@ output "controller_ips" {
   description = "Public ip address of the controllers"
 }
 
-output "lb_id" {
-  value       = var.lb_type == null ? null : hcloud_load_balancer.lb[0].id
-  description = "ID of this load balancer, use for define services into it"
+output "controller_ids" {
+  value       = [for s in local.servers : hcloud_server.servers[s.name].id if s.role == "controller"]
+  description = "Hetzner Identifier of controller servers"
 }
 
-output "lb_ip" {
-  value       = var.lb_type == null ? null : hcloud_load_balancer.lb[0].ipv4
-  description = "Public ip address of the load balancer, use this IP as main HTTPS entrypoint through your worker nodes"
+output "worker_ids" {
+  value = { for n in var.agent_nodepools :
+    n.name => [for s in local.servers : hcloud_server.servers[s.name].id if s.role == n.name]
+  }
+  description = "Hetzner Identifier of workers grouped by role"
 }
 
 output "ssh_config" {

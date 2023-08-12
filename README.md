@@ -16,7 +16,9 @@ Check [Kube-Hetzner](https://github.com/kube-hetzner/terraform-hcloud-kube-hetzn
 
 All nodes including LB will be linked with a proper private network as well as **solid firewall protection**. For admin management, only the 1st main control plane (bastion) node will have open ports for SSH (configurable) and kube-apiserver (port **6443**), with **IP whitelist** support. Other internal nodes will be accessed by SSH Jump.
 
-Hetzner Load Balancer will be used for any external public access to your cluster.
+### Load Balancer
+
+Hetzner Load Balancer can be used for any external public access to your cluster as well as your controller pane. Note as this functionality is not directly included in this provider in order to allow maximum flexibility. Check `lb.tf.example` for complete example.
 
 ### OS management
 
@@ -59,14 +61,7 @@ Now it's time for initial cluster setup.
 
 ### Access
 
-Once terraform installation is complete, terraform will output the SSH config necessary to connect to your cluster for each node as well as following public IPs :
-
-| Variable         | Description                                             |
-| ---------------- | ------------------------------------------------------- |
-| `bastion_ip`     | Bastion IP for OS and Kubernetes management             |
-| `controller_ips` | All available IPs controllers for Kubernetes API access |
-| `lb_ip`          | Load Balancer IP to use for any external public access  |
-| `lb_id`          | Load Balancer ID to use for attaching any services      |
+Once terraform installation is complete, terraform will output the SSH config necessary to connect to your cluster for each node.
 
 Copy the SSH config to your own SSH config, default to `~/.ssh/config`. After few minutes, you can use `ssh <cluster_name>` in order to log in to your main control plane node. For other nodes, the control plane will be used as a bastion for direct access to other nodes, so use `ssh <cluster_name>-worker-01` to directly access to your *worker-01* node.
 

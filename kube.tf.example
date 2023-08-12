@@ -113,38 +113,6 @@ module "hcloud_k3s" {
       volume_size       = 20
     }
   ]
-
-  # The type of load balancer. Remove lb_* variables to install cluster without LB.
-  lb_type = "lb11"
-  # The above nodepool to be load balanced. These nodes should have a proper ingress controller installed, as traefik.
-  lb_target = "worker"
-}
-
-resource "hcloud_load_balancer_service" "http_service" {
-  load_balancer_id = module.hcloud_k3s.lb_id
-  protocol         = "tcp"
-  listen_port      = 80
-  destination_port = 80
-}
-
-resource "hcloud_load_balancer_service" "https_service" {
-  load_balancer_id = module.hcloud_k3s.lb_id
-  protocol         = "tcp"
-  listen_port      = 443
-  destination_port = 443
-  proxyprotocol    = true
-}
-
-output "bastion_ip" {
-  value = module.hcloud_k3s.bastion_ip
-}
-
-output "controller_ips" {
-  value = module.hcloud_k3s.controller_ips
-}
-
-output "lb_ip" {
-  value = module.hcloud_k3s.lb_ip
 }
 
 output "ssh_config" {
