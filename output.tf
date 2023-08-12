@@ -3,14 +3,9 @@ output "network_id" {
   description = "ID of the private network"
 }
 
-output "bastion_ip" {
-  value       = local.bastion_ip
-  description = "Public ip address of the bastion, link this IP to connection to your bastion server"
-}
-
-output "controller_ips" {
-  value       = [for s in local.servers : hcloud_server.servers[s.name].ipv4_address if s.role == "controller"]
-  description = "Public ip address of the controllers"
+output "firewall_private_id" {
+  value       = hcloud_firewall.firewall_private.id
+  description = "ID of the private firewall, allowing attaching to any custom servers"
 }
 
 output "controller_ids" {
