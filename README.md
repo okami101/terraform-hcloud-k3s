@@ -8,17 +8,15 @@ This opinionated Terraform template will generate a ready-to-go cloud infrastruc
 
 Additional controllers and workers can be easily added thanks to terraform variables, even after initial setup for **easy upscaling**. Feel free to fork this project in order to adapt for your custom needs.
 
-Check [Kube-Hetzner](https://github.com/kube-hetzner/terraform-hcloud-kube-hetzner) for a more advanced setup with Hetzner Cloud with optimized OS for containers workload. This project uses only OS supported by Hetzner and intends to be far more lightweight without any local/remote exec provisioners (only cloud-init), quicker to set up, and Windows compatible.
+Check [Kube-Hetzner](https://github.com/kube-hetzner/terraform-hcloud-kube-hetzner) for a more advanced setup with Hetzner Cloud with optimized OS for containers workload. The current project uses only OS supported by Hetzner and intends to be far more lightweight without any local/remote exec provisioners (only cloud-init), quicker to set up, and Windows compatible.
 
-> I will always insist that you may not need Kubernetes. For any personal usage and apart from K8S learning, the [Swarm provider](https://github.com/okami101/terraform-hcloud-swarm) should be a better fit, as it's a far more lightweight orchestrator, whether in terms of machine resources (even it's K3s) or human brain.
+> For people that need a lightweight container orchestrator, the [Swarm provider](https://github.com/okami101/terraform-hcloud-swarm) should be a better fit.
 
 ### Networking and firewall
 
-All nodes including LB will be linked with a proper private network as well as **solid firewall protection**. For admin management, only the 1st main control plane (bastion) node will have open ports for SSH (configurable) and kube-apiserver (port **6443**), with **IP whitelist** support. Other internal nodes will be accessed by SSH Jump.
+All nodes will be linked with a proper private network as well as **solid firewall protection**. For admin management, only control planes will have open ports for SSH (configurable) and kube-apiserver (port **6443**), with **IP whitelist** support. Other internal nodes can only be accessed by SSH Jump.
 
-### Load Balancer
-
-Hetzner Load Balancer can be used for any external public access to your cluster as well as your controller pane. Note as this functionality is not directly included in this provider in order to allow maximum flexibility. Check `lb.tf.example` for complete example.
+Hetzner Load Balancer can be used for any external public access to your cluster as well as your controller pane. Simply set `lb_type` for a specific nodepool in order to create dedicated LB. Then directly use `hcloud_load_balancer_service` for enabling any services (mostly HTTP / HTTPS), in order to allow maximum flexibility. Check [kube config](kube.tf.example) for complete example.
 
 ### OS management
 
@@ -106,6 +104,7 @@ agent_nodepools = [
     #...
     count = 3
     taints = []
+    lb_type = "lb11"
   },
   {
     name = "storage"
@@ -117,8 +116,6 @@ agent_nodepools = [
     volume_size = 20
   }
 ]
-
-lb_target = "web"
 # ...
 ```
 

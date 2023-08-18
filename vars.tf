@@ -111,6 +111,7 @@ variable "control_planes" {
     count             = string,
     labels            = list(string)
     taints            = list(string)
+    lb_type           = optional(string)
   })
 }
 
@@ -124,6 +125,8 @@ variable "agent_nodepools" {
     count             = number
     labels            = list(string)
     taints            = list(string)
+    lb_type           = optional(string)
     volume_size       = optional(number)
+    volume_format     = optional(string)
   }))
 }

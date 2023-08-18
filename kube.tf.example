@@ -79,6 +79,9 @@ module "hcloud_k3s" {
     taints = [
       "node-role.kubernetes.io/control-plane:NoSchedule"
     ]
+    # When HA mode, associate controllers to a dedicated load balancer
+    # Optional attribute, remove it to use controller ips directly
+    lb_type = "lb11"
   }
 
   # Here is the worker nodes, categorized according to unique typology (defined as a pool) of servers, taints, etc.
@@ -95,6 +98,8 @@ module "hcloud_k3s" {
       labels            = []
       # No taint, can accept any workloads.
       taints            = []
+      # Associate nodepool to a dedicated load balancer (optional)
+      lb_type           = "lb11"
     },
     {
       # Here is an example of a nodepool with a different server type, and a taint. Typically used for database oriented nodes.
@@ -110,10 +115,84 @@ module "hcloud_k3s" {
         "node-role.kubernetes.io/storage:NoSchedule"
       ]
       # Set a volume size in GB (at least 10) if need a block volume on each node of this pool
-      volume_size       = 20
+      volume_size   = 20
+      volume_format = "ext4"
     }
   ]
 }
+
+#
+# Use next lines to enable load balancer services.
+#
+
+resource "hcloud_load_balancer_service" "ssh_service" {
+  load_balancer_id = module.hcloud_k3s.lb_ids.worker
+  protocol         = "tcp"
+  listen_port      = 22
+  destination_port = 22
+}
+
+resource "hcloud_load_balancer_service" "http_service" {
+  load_balancer_id = module.hcloud_k3s.lb_ids.worker
+  protocol         = "tcp"
+  listen_port      = 80
+  destination_port = 80
+}
+
+resource "hcloud_load_balancer_service" "https_service" {
+  load_balancer_id = module.hcloud_k3s.lb_ids.worker
+  protocol         = "tcp"
+  listen_port      = 443
+  destination_port = 443
+  proxyprotocol    = true
+}
+
+#
+# Use next lines if you plan to use certificates directly managed by Hetzner
+# This will replace above http_service as well as https_service
+#
+
+# resource "hcloud_managed_certificate" "example" {
+#   name         = "example"
+#   domain_names = ["*.example.com", "example.com"]
+# }
+
+# resource "hcloud_load_balancer_service" "https_service" {
+#   load_balancer_id = module.hcloud_k3s.lb_ids.worker
+#   protocol         = "https"
+#   listen_port      = 443
+#   destination_port = 80
+#   proxyprotocol    = true
+#   http {
+#     redirect_http = true
+#     certificates  = [hcloud_managed_certificate.example.id]
+#   }
+#   health_check {
+#     protocol = "http"
+#     interval = 15
+#     port     = 80
+#     timeout  = 10
+#     http {
+#       status_codes = ["404"]
+#       path         = "/"
+#     }
+#   }
+# }
+
+#
+# Use next lines to enable dedicated load balancer for controllers when HA mode.
+#
+
+# resource "hcloud_load_balancer_service" "kube_service" {
+#   load_balancer_id = module.hcloud_k3s.lb_ids.controller
+#   protocol         = "tcp"
+#   listen_port      = 6443
+#   destination_port = 6443
+# }
+
+#
+# Output ssh config for access
+#
 
 output "ssh_config" {
   value = module.hcloud_k3s.ssh_config

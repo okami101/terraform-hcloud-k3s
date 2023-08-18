@@ -8,6 +8,11 @@ output "firewall_private_id" {
   description = "ID of the private firewall, allowing attaching to any custom servers"
 }
 
+output "lb_ids" {
+  value       = { for i, lb in hcloud_load_balancer.lbs : i => lb.id }
+  description = "Hetzner Identifier of load balancers, use them to configure services"
+}
+
 output "controller_ids" {
   value       = [for s in local.servers : hcloud_server.servers[s.name].id if s.role == "controller"]
   description = "Hetzner Identifier of controller servers"

@@ -9,6 +9,7 @@ locals {
         role              = "controller"
         labels            = var.control_planes.labels
         taints            = var.control_planes.taints
+        lb_type           = var.control_planes.lb_type
         volume_size       = 0
       }
     ],
@@ -22,10 +23,26 @@ locals {
           role              = s.name
           labels            = s.labels
           taints            = s.taints
+          lb_type           = s.lb_type
           volume_size       = s.volume_size != null ? s.volume_size : 0
+          volume_format     = s.volume_format != null ? s.volume_format : "ext4"
         }
       ]
     ])
+  )
+  load_balancers = concat(
+    var.control_planes.lb_type != null ? [{
+      name = "controller"
+      type = var.control_planes.lb_type
+      ip   = "10.0.0.100"
+    }] : [],
+    [
+      for i, s in var.agent_nodepools : {
+        name = s.name
+        type = s.lb_type
+        ip   = "10.0.${coalesce(s.private_ip_index, i) + 1}.100"
+      } if s.lb_type != null
+    ]
   )
   bastion_server_name = "controller-01"
   bastion_server      = one([for s in local.servers : s if s.name == local.bastion_server_name])
