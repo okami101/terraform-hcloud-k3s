@@ -48,6 +48,7 @@ variable "cluster_user" {
 
 variable "my_ssh_key_names" {
   description = "List of hcloud SSH key names that will be used to access the servers"
+  default     = []
   type        = list(string)
 }
 
