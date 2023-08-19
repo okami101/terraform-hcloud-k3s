@@ -26,7 +26,6 @@ module "hcloud_k3s" {
   # Next all self-explanatory variables that you can customized. See https://registry.terraform.io/modules/okami101/k3s/hcloud/latest?tab=inputs for description.
 
   server_image    = "ubuntu-22.04"
-  server_location = "nbg1"
   server_timezone = "Europe/Paris"
   server_locale   = "fr_FR.UTF-8"
 
@@ -69,7 +68,10 @@ module "hcloud_k3s" {
   }
 
   control_planes = {
+    # Type "hcloud server-type list" for choose
     server_type = "cx21"
+    # Type "hcloud datacenter list" for choose
+    location    = "nbg1"
     # In hetzner, private_interface is the interface name for private network, ens10 is the default one for intel nics, enp7s0 for amd nics.
     private_interface = "ens10"
     # The number of control planes. For HA with etcd, use an odd number, 1, 3, 5, etc. Note as the 1st control plane will be the default bastion server, and will be used as main entry for any SSH access to any nodes.
@@ -90,6 +92,7 @@ module "hcloud_k3s" {
       # Will define the final hostname, aka <cluster_name>-worker-01, etc.
       name              = "worker"
       server_type       = "cx21"
+      location          = "nbg1"
       private_interface = "ens10"
       # You can use next optional attribute to define the range private IP index for the nodepool. It allows to move items in the list without breaking the IP range.
       private_ip_index  = 0
@@ -105,6 +108,7 @@ module "hcloud_k3s" {
       # Here is an example of a nodepool with a different server type, and a taint. Typically used for database oriented nodes.
       name              = "storage"
       server_type       = "cx21"
+      location          = "nbg1"
       private_interface = "ens10"
       private_ip_index  = 1
       count             = 1

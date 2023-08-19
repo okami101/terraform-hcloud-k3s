@@ -4,12 +4,6 @@ variable "server_image" {
   default     = "ubuntu-22.04"
 }
 
-variable "server_location" {
-  description = "The default location where to create hcloud resources"
-  type        = string
-  default     = "nbg1"
-}
-
 variable "network_zone" {
   description = "The network zone where to attach hcloud resources"
   type        = string
@@ -107,9 +101,10 @@ variable "disabled_components" {
 variable "control_planes" {
   description = "Size and count of control planes"
   type = object({
-    server_type       = string,
+    server_type       = string
+    location          = string
     private_interface = string
-    count             = string,
+    count             = string
     labels            = list(string)
     taints            = list(string)
     lb_type           = optional(string)
@@ -121,6 +116,7 @@ variable "agent_nodepools" {
   type = list(object({
     name              = string
     server_type       = string
+    location          = string
     private_interface = string
     private_ip_index  = optional(number)
     count             = number

@@ -4,6 +4,7 @@ locals {
       for i in range(var.control_planes.count) : {
         name              = "controller-${format("%02d", i + 1)}"
         server_type       = var.control_planes.server_type
+        location          = var.control_planes.location
         private_interface = var.control_planes.private_interface
         ip                = "10.0.0.${i + 2}"
         role              = "controller"
@@ -18,6 +19,7 @@ locals {
         for j in range(s.count) : {
           name              = "${s.name}-${format("%02d", j + 1)}"
           server_type       = s.server_type
+          location          = s.location
           private_interface = s.private_interface
           ip                = "10.0.${coalesce(s.private_ip_index, i) + 1}.${j + 1}"
           role              = s.name
@@ -32,15 +34,17 @@ locals {
   )
   load_balancers = concat(
     var.control_planes.lb_type != null ? [{
-      name = "controller"
-      type = var.control_planes.lb_type
-      ip   = "10.0.0.100"
+      name     = "controller"
+      type     = var.control_planes.lb_type
+      location = var.control_planes.location
+      ip       = "10.0.0.100"
     }] : [],
     [
       for i, s in var.agent_nodepools : {
-        name = s.name
-        type = s.lb_type
-        ip   = "10.0.${coalesce(s.private_ip_index, i) + 1}.100"
+        name     = s.name
+        type     = s.lb_type
+        location = s.location
+        ip       = "10.0.${coalesce(s.private_ip_index, i) + 1}.100"
       } if s.lb_type != null
     ]
   )
