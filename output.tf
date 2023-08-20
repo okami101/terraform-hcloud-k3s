@@ -1,11 +1,11 @@
 output "network" {
   value       = hcloud_network.network
-  description = "ID of the private network"
+  description = "Private Hetzner network"
 }
 
 output "firewall_private" {
   value       = hcloud_firewall.firewall_private
-  description = "ID of the private firewall, allowing attaching to any custom servers"
+  description = "Private Hetzner firewall, allowing attaching to any custom servers"
 }
 
 output "lbs" {
