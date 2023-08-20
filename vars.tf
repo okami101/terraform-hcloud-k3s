@@ -68,6 +68,12 @@ variable "my_ip_addresses" {
   ]
 }
 
+variable "allowed_inbound_ports" {
+  description = "Ports whitelist for workers via the Hetzner firewall configuration"
+  type        = list(number)
+  default     = []
+}
+
 variable "k3s_channel" {
   description = "K3S channel to use for the installation"
   type        = string

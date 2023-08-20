@@ -10,10 +10,6 @@ resource "hcloud_network_subnet" "network_subnet" {
   ip_range     = "10.0.0.0/16"
 }
 
-resource "hcloud_firewall" "firewall_private" {
-  name = "firewall-private"
-}
-
 resource "hcloud_firewall" "firewall_controllers" {
   name = "firewall-controllers"
   rule {
@@ -27,6 +23,20 @@ resource "hcloud_firewall" "firewall_controllers" {
     port       = "6443"
     protocol   = "tcp"
     source_ips = var.my_ip_addresses
+  }
+}
+
+resource "hcloud_firewall" "firewall_workers" {
+  name = "firewall-workers"
+
+  dynamic "rule" {
+    for_each = { for i, p in var.allowed_inbound_ports : i => p }
+    content {
+      port       = rule.value
+      direction  = "in"
+      protocol   = "tcp"
+      source_ips = ["0.0.0.0/0", "::/0"]
+    }
   }
 }
 

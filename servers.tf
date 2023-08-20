@@ -5,8 +5,9 @@ resource "hcloud_server" "servers" {
   server_type = each.value.server_type
   location    = each.value.location
   firewall_ids = concat(
-    [hcloud_firewall.firewall_private.id],
-    each.value.role == "controller" ? [hcloud_firewall.firewall_controllers.id] : []
+    each.value.role == "controller"
+    ? [hcloud_firewall.firewall_controllers.id]
+    : [hcloud_firewall.firewall_workers.id],
   )
   ssh_keys = var.my_ssh_key_names
   depends_on = [
