@@ -15,14 +15,14 @@ output "lbs" {
 
 output "controllers" {
   value       = [for s in local.servers : hcloud_server.servers[s.name] if s.role == "controller"]
-  description = "Hetzner Identifier of controller servers"
+  description = "Controller servers"
 }
 
 output "workers" {
   value = { for n in var.agent_nodepools :
     n.name => [for s in local.servers : hcloud_server.servers[s.name] if s.role == n.name]
   }
-  description = "Hetzner Identifier of workers grouped by role"
+  description = "Workers grouped by role"
 }
 
 output "ssh_config" {
