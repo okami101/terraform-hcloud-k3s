@@ -1,10 +1,10 @@
-output "network_id" {
-  value       = hcloud_network.network.id
+output "network" {
+  value       = hcloud_network.network
   description = "ID of the private network"
 }
 
-output "firewall_private_id" {
-  value       = hcloud_firewall.firewall_private.id
+output "firewall_private" {
+  value       = hcloud_firewall.firewall_private
   description = "ID of the private firewall, allowing attaching to any custom servers"
 }
 
