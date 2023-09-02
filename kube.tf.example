@@ -53,6 +53,9 @@ module "hcloud_k3s" {
   # Additional TLS-SANs for kube-api server.
   # tls_sans = ["cp.cluster.my.org"]
 
+  # Enable wireguard as network encryption protocol
+  # enable_wireguard = true
+
   # Disable included k3s traefik ingress controller.
   disabled_components = ["traefik"]
   # All advanced parameters for each kubelet, see https://kubernetes.io/docs/reference/command-line-tools-reference/kubelet/.
