@@ -54,7 +54,7 @@ locals {
   k3s_server_config = {
     disable         = var.disabled_components
     tls-san         = var.tls_sans
-    flannel-backend = var.enable_wireguard ? "wireguard-native" : "vxlan"
+    flannel-backend = var.disable_flannel ? "none" : var.enable_wireguard ? "wireguard-native" : "vxlan"
   }
   etcd_s3_snapshots = length(keys(var.etcd_s3_backup)) > 0 ? merge(
     {

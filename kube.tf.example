@@ -53,6 +53,9 @@ module "hcloud_k3s" {
   # Additional TLS-SANs for kube-api server.
   # tls_sans = ["cp.cluster.my.org"]
 
+  # Disable flannel for k3s installation
+  # disable_flannel = true
+
   # Enable wireguard as network encryption protocol
   # enable_wireguard = true
 
@@ -62,13 +65,24 @@ module "hcloud_k3s" {
   kubelet_args = []
 
   # Add s3 backup for etcd.
-  etcd_s3_backup = {
-    etcd-s3-endpoint            = "xxxxxx.r2.cloudflarestorage.com"
-    etcd-s3-access-key          = "xxxxxx"
-    etcd-s3-secret-key          = "xxxxxx"
-    etcd-s3-bucket              = "xxxxxx"
-    etcd-snapshot-schedule-cron = "0 0 * * *"
-  }
+  # etcd_s3_backup = {
+  #   etcd-s3-endpoint            = "xxxxxx.r2.cloudflarestorage.com"
+  #   etcd-s3-access-key          = "xxxxxx"
+  #   etcd-s3-secret-key          = "xxxxxx"
+  #   etcd-s3-bucket              = "xxxxxx"
+  #   etcd-snapshot-schedule-cron = "0 0 * * *"
+  # }
+
+  # Add custom control plane configuration options here.
+  # E.g to enable monitoring for etcd, proxy etc:
+  # control_planes_custom_config = {
+  #  etcd-expose-metrics = true,
+  #  kube-controller-manager-arg = "bind-address=0.0.0.0",
+  #  kube-proxy-arg ="metrics-bind-address=0.0.0.0",
+  #  kube-scheduler-arg = "bind-address=0.0.0.0",
+  #  kube-scheduler-arg = "bind-address=0.0.0.0",
+  #  secrets-encryption = true,
+  # }
 
   control_planes = {
     # Type "hcloud server-type list" for choose

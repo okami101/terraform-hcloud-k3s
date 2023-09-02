@@ -31,6 +31,7 @@ resource "hcloud_server" "servers" {
       merge(
         local.k3s_server_config,
         local.etcd_s3_snapshots,
+        var.control_planes_custom_config,
         {
           flannel-iface = each.value.private_interface
           node-ip       = each.value.ip

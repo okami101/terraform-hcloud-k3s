@@ -99,6 +99,18 @@ variable "etcd_s3_backup" {
   default     = {}
 }
 
+variable "control_planes_custom_config" {
+  type        = any
+  default     = {}
+  description = "Custom control plane configuration e.g to allow etcd monitoring."
+}
+
+variable "disable_flannel" {
+  description = "Disable flannel for k3s installation"
+  type        = bool
+  default     = false
+}
+
 variable "enable_wireguard" {
   description = "Enable wireguard for flannel backend"
   type        = bool
