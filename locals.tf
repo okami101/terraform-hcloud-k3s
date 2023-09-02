@@ -52,8 +52,9 @@ locals {
   bastion_server      = one([for s in local.servers : s if s.name == local.bastion_server_name])
   bastion_ip          = hcloud_server.servers[local.bastion_server_name].ipv4_address
   k3s_server_config = {
-    disable = var.disabled_components
-    tls-san = var.tls_sans
+    disable         = var.disabled_components
+    tls-san         = var.tls_sans
+    flannel-backend = var.enable_wireguard ? "wireguard-native" : "vxlan"
   }
   etcd_s3_snapshots = length(keys(var.etcd_s3_backup)) > 0 ? merge(
     {
