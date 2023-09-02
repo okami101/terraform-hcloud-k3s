@@ -99,6 +99,12 @@ variable "etcd_s3_backup" {
   default     = {}
 }
 
+variable "enable_wireguard" {
+  description = "Enable wireguard for flannel backend"
+  type        = bool
+  default     = false
+}
+
 variable "disabled_components" {
   description = "Components to disable for k3s installation"
   type        = list(string)

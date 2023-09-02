@@ -27,10 +27,10 @@ resource "hcloud_server" "servers" {
     ssh_port        = var.ssh_port
     minion_id       = each.value.name
     is_server       = each.value.role == "controller"
-    k3s_config = base64encode(yamlencode(
+    k3s_config = base64encode(each.value.role == "controller" ? yamlencode(
       merge(
-        each.value.role == "controller" ? local.k3s_server_config : {},
-        each.value.role == "controller" ? local.etcd_s3_snapshots : {},
+        local.k3s_server_config,
+        local.etcd_s3_snapshots,
         {
           flannel-iface = each.value.private_interface
           node-ip       = each.value.ip
@@ -38,7 +38,14 @@ resource "hcloud_server" "servers" {
           node-taint    = each.value.taints
           kubelet-arg   = var.kubelet_args
         }
-      )
+      )) : yamlencode(
+      {
+        flannel-iface = each.value.private_interface
+        node-ip       = each.value.ip
+        node-label    = each.value.labels
+        node-taint    = each.value.taints
+        kubelet-arg   = var.kubelet_args
+      }
     ))
   })
 
