@@ -32,11 +32,12 @@ resource "hcloud_server" "servers" {
         each.value.role == "controller" ? local.k3s_server_config : {},
         each.value.role == "controller" ? local.etcd_s3_snapshots : {},
         {
-          flannel-iface = each.value.private_interface
-          node-ip       = each.value.ip
-          node-label    = each.value.labels
-          node-taint    = each.value.taints
-          kubelet-arg   = var.kubelet_args
+          flannel-iface   = each.value.private_interface
+          flannel-backend = var.enable_wireguard ? "wireguard-native" : "vxlan"
+          node-ip         = each.value.ip
+          node-label      = each.value.labels
+          node-taint      = each.value.taints
+          kubelet-arg     = var.kubelet_args
         }
       )
     ))
