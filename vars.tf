@@ -123,6 +123,24 @@ variable "disabled_components" {
   default     = []
 }
 
+variable "enable_bastion" {
+  description = "Install a bastion host with wireguard VPN for accessing the cluster"
+  type        = bool
+  default     = false
+}
+
+variable "bastion_server_type" {
+  description = "Hetzner server type of bastion"
+  type        = string
+  default     = "cx11"
+}
+
+variable "bastion_location" {
+  description = "Hetzner server type of bastion"
+  type        = string
+  default     = "nbg1"
+}
+
 variable "control_planes" {
   description = "Size and count of control planes"
   type = object({

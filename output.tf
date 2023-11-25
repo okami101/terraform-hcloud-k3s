@@ -5,7 +5,7 @@ output "network" {
 
 output "firewall_workers" {
   value       = hcloud_firewall.firewall_workers
-  description = "Private Hetzner firewall, allowing attaching to any custom servers"
+  description = "Hetzner firewall for public services, allowing attaching to any custom servers"
 }
 
 output "lbs" {
@@ -31,7 +31,7 @@ output "ssh_config" {
     cluster_name = var.cluster_name
     cluster_user = var.cluster_user
     ssh_port     = var.ssh_port
-    bastion_ip   = local.bastion_ip
+    bastion_ip   = var.enable_bastion ? hcloud_server.bastion[0].ipv4_address : hcloud_server.servers[local.first_controller_name].ipv4_address
     servers      = local.servers
   })
 }

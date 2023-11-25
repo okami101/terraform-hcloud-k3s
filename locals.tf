@@ -1,4 +1,7 @@
 locals {
+  first_controller_ip   = "10.0.0.2"
+  first_controller_name = "controller-01"
+  bastion_ip            = var.enable_bastion ? "10.0.0.200" : local.first_controller_ip
   servers = concat(
     [
       for i in range(var.control_planes.count) : {
@@ -48,9 +51,6 @@ locals {
       } if s.lb_type != null
     ]
   )
-  bastion_server_name = "controller-01"
-  bastion_server      = one([for s in local.servers : s if s.name == local.bastion_server_name])
-  bastion_ip          = hcloud_server.servers[local.bastion_server_name].ipv4_address
   k3s_server_config = {
     disable         = var.disabled_components
     tls-san         = var.tls_sans

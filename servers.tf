@@ -13,20 +13,22 @@ resource "hcloud_server" "servers" {
   depends_on = [
     hcloud_network_subnet.network_subnet
   ]
-  user_data = templatefile("${path.module}/cloud-init.tftpl", {
-    server_timezone = var.server_timezone
-    server_locale   = var.server_locale
-    server_packages = var.server_packages
-    cluster_name    = var.cluster_name
-    cluster_user    = var.cluster_user
-    public_ssh_keys = var.my_public_ssh_keys
-    channel         = var.k3s_channel
-    token           = random_password.k3s_token.result
-    bastion_ip      = local.bastion_server.ip
-    is_bastion      = each.value.name == local.bastion_server_name
-    ssh_port        = var.ssh_port
-    minion_id       = each.value.name
-    is_server       = each.value.role == "controller"
+  user_data = templatefile("${path.module}/cloud-init-k3s.tftpl", {
+    server_timezone     = var.server_timezone
+    server_locale       = var.server_locale
+    server_packages     = var.server_packages
+    cluster_name        = var.cluster_name
+    cluster_user        = var.cluster_user
+    ssh_port            = var.ssh_port
+    public_ssh_keys     = var.my_public_ssh_keys
+    channel             = var.k3s_channel
+    token               = random_password.k3s_token.result
+    is_bastion          = !var.enable_bastion && each.value.ip == local.first_controller_ip
+    bastion_ip          = local.bastion_ip
+    is_first_controller = each.value.ip == local.first_controller_ip
+    first_controller_ip = local.first_controller_ip
+    minion_id           = each.value.name
+    is_server           = each.value.role == "controller"
     k3s_config = base64encode(each.value.role == "controller" ? yamlencode(
       merge(
         local.k3s_server_config,

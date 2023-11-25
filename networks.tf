@@ -10,8 +10,9 @@ resource "hcloud_network_subnet" "network_subnet" {
   ip_range     = "10.0.0.0/16"
 }
 
-resource "hcloud_firewall" "firewall_controllers" {
-  name = "firewall-controllers"
+resource "hcloud_firewall" "firewall_bastion" {
+  count = var.enable_bastion ? 1 : 0
+  name  = "firewall-bastion"
   rule {
     direction  = "in"
     port       = var.ssh_port
@@ -20,9 +21,34 @@ resource "hcloud_firewall" "firewall_controllers" {
   }
   rule {
     direction  = "in"
-    port       = "6443"
+    port       = "80"
     protocol   = "tcp"
-    source_ips = var.my_ip_addresses
+    source_ips = ["0.0.0.0/0", "::/0"]
+  }
+  rule {
+    direction  = "in"
+    port       = "443"
+    protocol   = "tcp"
+    source_ips = ["0.0.0.0/0", "::/0"]
+  }
+  rule {
+    direction  = "in"
+    port       = "51820"
+    protocol   = "udp"
+    source_ips = ["0.0.0.0/0", "::/0"]
+  }
+}
+
+resource "hcloud_firewall" "firewall_controllers" {
+  name = "firewall-controllers"
+  dynamic "rule" {
+    for_each = var.enable_bastion ? ["6443"] : [var.ssh_port, "6443"]
+    content {
+      direction  = "in"
+      port       = rule.value
+      protocol   = "tcp"
+      source_ips = var.my_ip_addresses
+    }
   }
 }
 

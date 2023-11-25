@@ -18,16 +18,6 @@ package_update: true
 package_upgrade: true
 package_reboot_if_required: true
 
-packages:
-%{ for package in server_packages ~}
-  - ${package}
-%{ endfor ~}
-
-write_files:
-  - path: /etc/rancher/k3s/config.yaml
-    encoding: b64
-    content: ${k3s_config}
-
 runcmd:
 %{ if ssh_port != null ~}
   - sed -i "/^#Port/s/^.*$/Port ${ssh_port}/" /etc/ssh/sshd_config
@@ -35,16 +25,6 @@ runcmd:
   - sed -i "/^PermitRootLogin/s/^.*$/PermitRootLogin no/" /etc/ssh/sshd_config
   - systemctl restart ssh
   - curl -o bootstrap-salt.sh -L https://bootstrap.saltproject.io
-%{ if is_bastion ~}
   - sh bootstrap-salt.sh -i ${minion_id} -M
-%{ else ~}
-  - sh bootstrap-salt.sh -i ${minion_id}
-%{ endif ~}
   - 'sed -i "s/#master: salt/master: ${bastion_ip}/" /etc/salt/minion'
   - systemctl restart salt-minion
-%{ if is_bastion ~}
-  - curl -sfL https://get.k3s.io | INSTALL_K3S_CHANNEL=${channel} K3S_TOKEN=${token} sh -s - server --cluster-init
-%{ else ~}
-  - sleep 30
-  - curl -sfL https://get.k3s.io | INSTALL_K3S_CHANNEL=${channel} K3S_TOKEN=${token} K3S_URL=https://${bastion_ip}:6443 sh -s - ${ is_server ? "server" : "agent" }
-%{ endif ~}
