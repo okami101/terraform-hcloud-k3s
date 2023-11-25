@@ -15,24 +15,6 @@ resource "hcloud_firewall" "firewall_bastion" {
   name  = "firewall-bastion"
   rule {
     direction  = "in"
-    port       = var.ssh_port
-    protocol   = "tcp"
-    source_ips = var.my_ip_addresses
-  }
-  rule {
-    direction  = "in"
-    port       = "80"
-    protocol   = "tcp"
-    source_ips = ["0.0.0.0/0", "::/0"]
-  }
-  rule {
-    direction  = "in"
-    port       = "443"
-    protocol   = "tcp"
-    source_ips = ["0.0.0.0/0", "::/0"]
-  }
-  rule {
-    direction  = "in"
     port       = "51820"
     protocol   = "udp"
     source_ips = ["0.0.0.0/0", "::/0"]
@@ -42,7 +24,7 @@ resource "hcloud_firewall" "firewall_bastion" {
 resource "hcloud_firewall" "firewall_controllers" {
   name = "firewall-controllers"
   dynamic "rule" {
-    for_each = var.enable_bastion ? ["6443"] : [var.ssh_port, "6443"]
+    for_each = var.enable_bastion ? [] : [var.ssh_port, "6443"]
     content {
       direction  = "in"
       port       = rule.value
