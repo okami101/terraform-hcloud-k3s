@@ -141,12 +141,6 @@ variable "bastion_location" {
   default     = "nbg1"
 }
 
-variable "bastion_vpn_only" {
-  description = "Open VPN access only for bastion host"
-  type        = bool
-  default     = false
-}
-
 variable "control_planes" {
   description = "Size and count of control planes"
   type = object({
