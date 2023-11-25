@@ -141,6 +141,12 @@ variable "bastion_location" {
   default     = "nbg1"
 }
 
+variable "wireguard_ui_port" {
+  description = "Wireguard UI port"
+  type        = string
+  default     = "443"
+}
+
 variable "control_planes" {
   description = "Size and count of control planes"
   type = object({

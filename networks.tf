@@ -33,7 +33,7 @@ resource "hcloud_firewall" "firewall_bastion" {
   }
   rule {
     direction  = "in"
-    port       = "8443"
+    port       = var.wireguard_ui_port
     protocol   = "tcp"
     source_ips = var.my_ip_addresses
   }
