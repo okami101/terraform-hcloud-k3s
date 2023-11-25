@@ -13,6 +13,14 @@ resource "hcloud_network_subnet" "network_subnet" {
 resource "hcloud_firewall" "firewall_bastion" {
   count = var.enable_bastion ? 1 : 0
   name  = "firewall-bastion"
+  dynamic "rule" {
+    for_each = var.bastion_vpn_only ? [] : [var.ssh_port, "80", "443"]
+    content {
+      direction = "in"
+      port      = rule.value
+      protocol  = "tcp"
+    }
+  }
   rule {
     direction  = "in"
     port       = "51820"
