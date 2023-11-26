@@ -11,7 +11,7 @@ resource "hcloud_network_subnet" "network_subnet" {
 }
 
 resource "hcloud_firewall" "firewall_bastion" {
-  count = var.enable_bastion ? 1 : 0
+  count = var.enable_dedicated_bastion ? 1 : 0
   name  = "firewall-bastion"
   rule {
     direction  = "in"
@@ -42,7 +42,7 @@ resource "hcloud_firewall" "firewall_bastion" {
 resource "hcloud_firewall" "firewall_controllers" {
   name = "firewall-controllers"
   dynamic "rule" {
-    for_each = var.enable_bastion ? [] : [var.ssh_port, "6443"]
+    for_each = var.enable_dedicated_bastion ? [] : [var.ssh_port, "6443"]
     content {
       direction  = "in"
       port       = rule.value

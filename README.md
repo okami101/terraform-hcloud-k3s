@@ -16,11 +16,15 @@ Check [Kube-Hetzner](https://github.com/kube-hetzner/terraform-hcloud-kube-hetzn
 
 All nodes will be linked with a proper private network as well as **solid firewall protection**. For admin management, only control planes will have open ports for SSH (configurable) and kube-apiserver (port **6443**), with **IP whitelist** support. Other internal nodes can only be accessed by SSH Jump.
 
-Hetzner Load Balancer can be used for any external public access to your cluster as well as your controller pane. Simply set `lb_type` for a specific nodepool in order to create dedicated LB. Then directly use `hcloud_load_balancer_service` for enabling any services (mostly HTTP / HTTPS), in order to allow maximum flexibility. Check [kube config](kube.tf.example) for complete example.
+Hetzner Load Balancer can be used for any external public access to your cluster as well as your controller pane. Simply set `lb_type` for a specific nodepool in order to create dedicated LB. Then directly use `hcloud_load_balancer_service` for enabling any services (mostly HTTP / HTTPS), allowing high flexibility. Check [kube config](kube.tf.example) for complete example.
 
 ### OS management
 
 This Terraform template includes **[Salt Project](https://docs.saltproject.io)** as well for easy global OS management of the cluster through ssh, perfect for upgrades in one single time !
+
+### Dedicated bastion support
+
+By default, the 1st control-pane is used as SSH bastion. Use `enable_dedicated_bastion` variable to enable a dedicated bastion node. Salt master will be installed in the dedicated bastion. It comes with WireGuard VPN preinstalled as well, offering better, and simpler centralized security management instead of using IP whitelist. Once logged into bastion through SSH, use `sudo -s` to configure WireGuard, you must have a valid domain pointing to the bastion public IP in order to generate SSL certificate for WireGuard UI.
 
 ## ✅ Requirements
 

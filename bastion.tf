@@ -1,5 +1,5 @@
 resource "hcloud_server" "bastion" {
-  count        = var.enable_bastion ? 1 : 0
+  count        = var.enable_dedicated_bastion ? 1 : 0
   name         = "${var.cluster_name}-bastion"
   image        = "wireguard"
   server_type  = var.bastion_server_type
@@ -30,7 +30,7 @@ resource "hcloud_server" "bastion" {
 }
 
 resource "hcloud_server_network" "bastion" {
-  count      = var.enable_bastion ? 1 : 0
+  count      = var.enable_dedicated_bastion ? 1 : 0
   server_id  = hcloud_server.bastion[0].id
   network_id = hcloud_network.network.id
   ip         = local.bastion_ip

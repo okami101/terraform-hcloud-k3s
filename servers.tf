@@ -23,7 +23,7 @@ resource "hcloud_server" "servers" {
     public_ssh_keys     = var.my_public_ssh_keys
     channel             = var.k3s_channel
     token               = random_password.k3s_token.result
-    is_bastion          = !var.enable_bastion && each.value.ip == local.first_controller_ip
+    is_bastion          = !var.enable_dedicated_bastion && each.value.ip == local.first_controller_ip
     bastion_ip          = local.bastion_ip
     is_first_controller = each.value.ip == local.first_controller_ip
     first_controller_ip = local.first_controller_ip

@@ -123,8 +123,8 @@ variable "disabled_components" {
   default     = []
 }
 
-variable "enable_bastion" {
-  description = "Install a bastion host with wireguard VPN for accessing the cluster"
+variable "enable_dedicated_bastion" {
+  description = "Install a dedicated bastion host with wireguard VPN preinstalled app"
   type        = bool
   default     = false
 }

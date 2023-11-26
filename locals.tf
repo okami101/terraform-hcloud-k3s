@@ -1,7 +1,7 @@
 locals {
   first_controller_ip   = "10.0.0.2"
   first_controller_name = "controller-01"
-  bastion_ip            = var.enable_bastion ? "10.0.0.200" : local.first_controller_ip
+  bastion_ip            = var.enable_dedicated_bastion ? "10.0.0.200" : local.first_controller_ip
   servers = concat(
     [
       for i in range(var.control_planes.count) : {
