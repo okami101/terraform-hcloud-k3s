@@ -141,14 +141,14 @@ variable "bastion_location" {
   default     = "nbg1"
 }
 
-variable "wireguard_port" {
-  description = "WireGuard port"
+variable "bastion_wireguard_port" {
+  description = "WireGuard port of bastion"
   type        = string
   default     = "51820"
 }
 
-variable "wireguard_ui_port" {
-  description = "WireGuard UI port"
+variable "bastion_wireguard_ui_port" {
+  description = "WireGuard UI port of bastion"
   type        = string
   default     = "443"
 }

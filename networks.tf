@@ -21,7 +21,7 @@ resource "hcloud_firewall" "firewall_bastion" {
   }
   rule {
     direction  = "in"
-    port       = var.wireguard_port
+    port       = var.bastion_wireguard_port
     protocol   = "udp"
     source_ips = ["0.0.0.0/0", "::/0"]
   }
@@ -33,7 +33,7 @@ resource "hcloud_firewall" "firewall_bastion" {
   }
   rule {
     direction  = "in"
-    port       = var.wireguard_ui_port
+    port       = var.bastion_wireguard_ui_port
     protocol   = "tcp"
     source_ips = var.my_ip_addresses
   }
