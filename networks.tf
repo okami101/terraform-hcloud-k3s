@@ -21,7 +21,7 @@ resource "hcloud_firewall" "firewall_bastion" {
   }
   rule {
     direction  = "in"
-    port       = "51820"
+    port       = var.wireguard_port
     protocol   = "udp"
     source_ips = ["0.0.0.0/0", "::/0"]
   }

@@ -136,13 +136,19 @@ variable "bastion_server_type" {
 }
 
 variable "bastion_location" {
-  description = "Hetzner server type of bastion"
+  description = "Hetzner server location of bastion"
   type        = string
   default     = "nbg1"
 }
 
+variable "wireguard_port" {
+  description = "WireGuard port"
+  type        = string
+  default     = "51820"
+}
+
 variable "wireguard_ui_port" {
-  description = "Wireguard UI port"
+  description = "WireGuard UI port"
   type        = string
   default     = "443"
 }
