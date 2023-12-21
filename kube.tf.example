@@ -50,17 +50,6 @@ module "hcloud_k3s" {
   # Use stable (production usage) or latest (staging usage).
   k3s_channel = "stable"
 
-  # Additional TLS-SANs for kube-api server.
-  # tls_sans = ["cp.cluster.my.org"]
-
-  # Disable flannel for k3s installation
-  # disable_flannel = true
-
-  # Enable wireguard as network encryption protocol
-  # enable_wireguard = true
-
-  # Disable included k3s traefik ingress controller.
-  disabled_components = ["traefik"]
   # All advanced parameters for each kubelet, see https://kubernetes.io/docs/reference/command-line-tools-reference/kubelet/.
   kubelet_args = []
 

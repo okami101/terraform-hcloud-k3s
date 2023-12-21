@@ -80,12 +80,6 @@ variable "k3s_channel" {
   default     = "stable"
 }
 
-variable "tls_sans" {
-  description = "Additional TLS SANs to use for the k3s installation"
-  type        = list(string)
-  default     = []
-}
-
 variable "kubelet_args" {
   description = "Additional arguments for each kubelet service"
   type        = list(string)
@@ -96,24 +90,6 @@ variable "control_planes_custom_config" {
   type        = any
   default     = {}
   description = "Custom control plane configuration e.g to allow etcd monitoring."
-}
-
-variable "disable_flannel" {
-  description = "Disable flannel for k3s installation"
-  type        = bool
-  default     = false
-}
-
-variable "enable_wireguard" {
-  description = "Enable wireguard for flannel backend"
-  type        = bool
-  default     = false
-}
-
-variable "disabled_components" {
-  description = "Components to disable for k3s installation"
-  type        = list(string)
-  default     = []
 }
 
 variable "enable_dedicated_bastion" {

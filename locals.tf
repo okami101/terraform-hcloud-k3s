@@ -65,9 +65,4 @@ locals {
       } if s.lb_type != null
     ]
   )
-  k3s_server_config = {
-    disable         = var.disabled_components
-    tls-san         = var.tls_sans
-    flannel-backend = var.disable_flannel ? "none" : var.enable_wireguard ? "wireguard-native" : "vxlan"
-  }
 }
