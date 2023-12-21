@@ -23,6 +23,7 @@ resource "hcloud_server" "bastion" {
 
   lifecycle {
     ignore_changes = [
+      firewall_ids,
       user_data,
       ssh_keys
     ]
