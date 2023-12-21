@@ -32,7 +32,6 @@ resource "hcloud_server" "servers" {
     k3s_config = base64encode(each.value.role == "controller" ? yamlencode(
       merge(
         local.k3s_server_config,
-        local.etcd_s3_snapshots,
         var.control_planes_custom_config,
         {
           flannel-iface = each.value.private_interface

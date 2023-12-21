@@ -64,18 +64,15 @@ module "hcloud_k3s" {
   # All advanced parameters for each kubelet, see https://kubernetes.io/docs/reference/command-line-tools-reference/kubelet/.
   kubelet_args = []
 
-  # Add s3 backup for etcd.
-  # etcd_s3_backup = {
-  #   etcd-s3-endpoint            = "xxxxxx.r2.cloudflarestorage.com"
-  #   etcd-s3-access-key          = "xxxxxx"
-  #   etcd-s3-secret-key          = "xxxxxx"
-  #   etcd-s3-bucket              = "xxxxxx"
-  #   etcd-snapshot-schedule-cron = "0 0 * * *"
-  # }
-
   # Add custom control plane configuration options here.
   # E.g to enable monitoring for etcd, proxy etc:
   # control_planes_custom_config = {
+  #  etcd-s3                     = true
+  #  etcd-s3-endpoint            = "xxxxxx.r2.cloudflarestorage.com"
+  #  etcd-s3-access-key          = "xxxxxx"
+  #  etcd-s3-secret-key          = "xxxxxx"
+  #  etcd-s3-bucket              = "xxxxxx"
+  #  etcd-snapshot-schedule-cron = "0 0 * * *"
   #  etcd-expose-metrics = true,
   #  kube-scheduler-arg = "bind-address=0.0.0.0",
   #  kube-controller-manager-arg = "bind-address=0.0.0.0",

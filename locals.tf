@@ -70,9 +70,4 @@ locals {
     tls-san         = var.tls_sans
     flannel-backend = var.disable_flannel ? "none" : var.enable_wireguard ? "wireguard-native" : "vxlan"
   }
-  etcd_s3_snapshots = length(keys(var.etcd_s3_backup)) > 0 ? merge(
-    {
-      etcd-s3 = true
-    },
-  var.etcd_s3_backup) : {}
 }

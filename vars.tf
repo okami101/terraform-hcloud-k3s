@@ -92,13 +92,6 @@ variable "kubelet_args" {
   default     = []
 }
 
-variable "etcd_s3_backup" {
-  description = "S3 backup configuration for etcd"
-  type        = map(any)
-  sensitive   = true
-  default     = {}
-}
-
 variable "control_planes_custom_config" {
   type        = any
   default     = {}
