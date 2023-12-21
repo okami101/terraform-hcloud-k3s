@@ -1,13 +1,14 @@
 resource "hcloud_network" "network" {
-  name     = "network"
+  name     = "${var.cluster_name}-network"
   ip_range = "10.0.0.0/16"
 }
 
 resource "hcloud_network_subnet" "network_subnet" {
+  for_each     = { for i, s in local.subnets : s.name => s }
   network_id   = hcloud_network.network.id
   type         = "cloud"
   network_zone = var.network_zone
-  ip_range     = "10.0.0.0/16"
+  ip_range     = each.value.ip
 }
 
 resource "hcloud_firewall" "firewall_bastion" {

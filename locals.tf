@@ -35,6 +35,20 @@ locals {
       ]
     ])
   )
+  subnets = concat(
+    [
+      {
+        name = "control_plane"
+        ip   = "10.0.0.0/24"
+      }
+    ],
+    [
+      for i, s in var.agent_nodepools : {
+        name = s.name
+        ip   = "10.0.${coalesce(s.private_ip_index, i) + 1}.0/24"
+      }
+    ]
+  )
   load_balancers = concat(
     var.control_planes.lb_type != null ? [{
       name     = "controller"
