@@ -21,7 +21,7 @@ module "hcloud_k3s" {
     hcloud = hcloud
   }
 
-  source = "okami101/hcloud-k3s"
+  source = "okami101/k3s/hcloud"
 
   # Next all self-explanatory variables that you can customized. See https://registry.terraform.io/modules/okami101/k3s/hcloud/latest?tab=inputs for description.
 
@@ -53,9 +53,11 @@ module "hcloud_k3s" {
   # All advanced parameters for each kubelet, see https://kubernetes.io/docs/reference/command-line-tools-reference/kubelet/.
   kubelet_args = []
 
-  # Add custom control plane configuration options here.
-  # E.g to enable monitoring for etcd, proxy etc:
+  # Add k3s server specific custom control plane configuration options here.
+  # E.g to enable monitoring for etcd, proxy etc.
+  # See this reference https://docs.k3s.io/cli/server
   # control_planes_custom_config = {
+  #  tls-san                     = ["my.domain.com"]
   #  etcd-s3                     = true
   #  etcd-s3-endpoint            = "xxxxxx.r2.cloudflarestorage.com"
   #  etcd-s3-access-key          = "xxxxxx"
