@@ -31,7 +31,8 @@ output "ssh_config" {
     cluster_name = var.cluster_name
     cluster_user = var.cluster_user
     ssh_port     = var.ssh_port
-    bastion_ip   = var.enable_dedicated_bastion ? hcloud_server.bastion[0].ipv4_address : hcloud_server.servers[local.first_controller_name].ipv4_address
+    bastion_ip   = var.enable_dedicated_bastion ? local.bastion_ip : hcloud_server.servers[local.first_controller_name].ipv4_address
     servers      = local.servers
+    use_bastion  = var.enable_dedicated_bastion
   })
 }

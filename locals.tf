@@ -1,7 +1,7 @@
 locals {
   first_controller_ip   = "10.0.0.2"
   first_controller_name = "controller-01"
-  bastion_ip            = var.enable_dedicated_bastion ? "10.0.0.200" : local.first_controller_ip
+  bastion_ip            = var.enable_dedicated_bastion ? "10.0.100.1" : local.first_controller_ip
   servers = concat(
     [
       for i in range(var.control_planes.count) : {
@@ -47,7 +47,13 @@ locals {
         name = s.name
         ip   = "10.0.${coalesce(s.private_ip_index, i) + 1}.0/24"
       }
-    ]
+    ],
+    var.enable_dedicated_bastion ? [
+      {
+        name = "bastion"
+        ip   = "10.0.100.0/24"
+      }
+    ] : [],
   )
   load_balancers = concat(
     var.control_planes.lb_type != null ? [{

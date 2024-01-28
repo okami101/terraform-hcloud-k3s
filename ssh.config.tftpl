@@ -1,5 +1,6 @@
 Host ${cluster_name}
     HostName ${bastion_ip}
+    HostKeyAlias ${cluster_name}-bastion
     User ${cluster_user}
     Port ${ssh_port}
 
@@ -9,6 +10,8 @@ Host ${cluster_name}-${s.name}
     HostKeyAlias ${cluster_name}-${s.name}
     User ${cluster_user}
     Port ${ssh_port}
+%{ if !use_bastion ~}
     ProxyJump ${cluster_name}
+%{ endif ~}
 
 %{ endfor ~}
