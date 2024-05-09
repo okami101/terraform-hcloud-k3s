@@ -4,6 +4,10 @@ resource "hcloud_server" "servers" {
   image       = var.server_image
   server_type = each.value.server_type
   location    = each.value.location
+  public_net {
+    ipv4_enabled = var.enable_ipv4
+    ipv6_enabled = var.enable_ipv6
+  }
   firewall_ids = each.value.role == "controller" ? [
     hcloud_firewall.firewall_controllers.id
     ] : [

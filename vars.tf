@@ -28,6 +28,18 @@ variable "server_packages" {
   default     = []
 }
 
+variable "enable_ipv4" {
+  description = "Enable IPv4 for all servers"
+  type        = bool
+  default     = true
+}
+
+variable "enable_ipv6" {
+  description = "Enable IPv6 for all servers"
+  type        = bool
+  default     = true
+}
+
 variable "ssh_port" {
   description = "Default SSH port to use for node access"
   type        = number
