@@ -46,6 +46,12 @@ variable "ssh_port" {
   default     = null
 }
 
+variable "network_index" {
+  description = "Index of the network to use for the cluster. Allow multiple clusters environments in the same project."
+  type        = number
+  default     = 0
+}
+
 variable "bastion_name" {
   description = "Used as hostname prefix for bastion"
   type        = string
@@ -108,6 +114,12 @@ variable "control_planes_custom_config" {
   type        = any
   default     = {}
   description = "Custom control plane configuration e.g to allow etcd monitoring."
+}
+
+variable "use_dedicated_bastion" {
+  description = "Use a existing bastion server for the cluster"
+  type        = string
+  default     = null
 }
 
 variable "enable_dedicated_bastion" {

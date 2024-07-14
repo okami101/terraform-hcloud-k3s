@@ -1,6 +1,6 @@
 resource "hcloud_network" "network" {
   name     = "${var.cluster_name}-network"
-  ip_range = "10.0.0.0/16"
+  ip_range = "10.${var.network_index}.0.0/16"
 }
 
 resource "hcloud_network_subnet" "network_subnet" {

@@ -31,8 +31,8 @@ resource "hcloud_server" "bastion" {
 }
 
 resource "hcloud_server_network" "bastion" {
-  count      = var.enable_dedicated_bastion ? 1 : 0
-  server_id  = hcloud_server.bastion[0].id
+  count      = local.attach_bastion ? 1 : 0
+  server_id  = var.enable_dedicated_bastion ? hcloud_server.bastion[0].id : var.use_dedicated_bastion
   network_id = hcloud_network.network.id
   ip         = local.bastion_ip
 }
