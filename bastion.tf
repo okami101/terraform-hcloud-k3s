@@ -1,6 +1,6 @@
 resource "hcloud_server" "bastion" {
   count        = var.enable_dedicated_bastion ? 1 : 0
-  name         = "${var.cluster_name}-bastion"
+  name         = "${coalesce(var.bastion_name, var.cluster_name)}-bastion"
   image        = "wireguard"
   server_type  = var.bastion_server_type
   location     = var.bastion_location

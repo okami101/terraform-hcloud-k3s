@@ -46,8 +46,14 @@ variable "ssh_port" {
   default     = null
 }
 
+variable "bastion_name" {
+  description = "Used as hostname prefix for bastion"
+  type        = string
+  default     = null
+}
+
 variable "cluster_name" {
-  description = "Used as hostname prefix for all hcloud resources"
+  description = "Used as hostname prefix for hcloud resources of the cluster"
   type        = string
   default     = "k3s"
 }
