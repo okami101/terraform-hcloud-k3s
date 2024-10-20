@@ -36,3 +36,8 @@ output "ssh_config" {
     use_bastion  = var.enable_dedicated_bastion
   })
 }
+
+output "k3s_token" {
+  description = "K3s token to join the cluster"
+  value       = random_password.k3s_token.result
+}
