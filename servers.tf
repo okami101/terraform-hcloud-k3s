@@ -58,7 +58,8 @@ resource "hcloud_server" "servers" {
     ignore_changes = [
       firewall_ids,
       user_data,
-      ssh_keys
+      ssh_keys,
+      image
     ]
   }
 }
