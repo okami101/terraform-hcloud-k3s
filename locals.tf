@@ -96,7 +96,7 @@ locals {
 Port ${var.ssh_port}
 PermitRootLogin no
 PasswordAuthentication no
-      EOT
+EOT
     path        = "/etc/ssh/sshd_config.d/99-custom.conf"
     permissions = "0644"
   }

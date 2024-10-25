@@ -17,51 +17,6 @@ resource "hcloud_server" "servers" {
   depends_on = [
     hcloud_network_subnet.network_subnet
   ]
-  user_data = yamlencode(merge(
-    local.base_cloud_init,
-    {
-      packages = var.server_packages,
-      write_files = [
-        local.ssh_custom_config,
-        local.minion_custom_config,
-        local.multipath_custom_config,
-        {
-          path        = "/etc/rancher/k3s/config.yaml"
-          encoding    = "b64"
-          permissions = "0644"
-          content = base64encode(each.value.role == "controller" ? yamlencode(
-            merge(
-              var.control_planes_custom_config,
-              {
-                flannel-iface = each.value.private_interface
-                node-ip       = each.value.ip
-                node-label    = each.value.labels
-                node-taint    = each.value.taints
-                kubelet-arg   = var.kubelet_args
-              }
-            )) : yamlencode(
-            {
-              flannel-iface = each.value.private_interface
-              node-ip       = each.value.ip
-              node-label    = each.value.labels
-              node-taint    = each.value.taints
-              kubelet-arg   = var.kubelet_args
-            }
-          ))
-        },
-      ]
-      run_cmd = concat(
-        local.base_run_cmd,
-        each.value.ip == local.first_controller_ip ? [
-          "${local.k3s_install} sh -s - server --cluster-init",
-          ] : [
-          "sleep 30",
-          "${local.k3s_install} K3S_URL=https://${local.first_controller_ip}:6443 sh -s - ${each.value.role == "controller" ? "server" : "agent"}",
-        ]
-      )
-    }
-  ))
-
   lifecycle {
     ignore_changes = [
       firewall_ids,
@@ -70,6 +25,53 @@ resource "hcloud_server" "servers" {
       image
     ]
   }
+  user_data = <<-EOT
+#cloud-init
+${yamlencode(merge(
+  local.base_cloud_init,
+  {
+    packages = var.server_packages,
+    write_files = [
+      local.ssh_custom_config,
+      local.minion_custom_config,
+      local.multipath_custom_config,
+      {
+        path        = "/etc/rancher/k3s/config.yaml"
+        encoding    = "b64"
+        permissions = "0644"
+        content = base64encode(each.value.role == "controller" ? yamlencode(
+          merge(
+            var.control_planes_custom_config,
+            {
+              flannel-iface = each.value.private_interface
+              node-ip       = each.value.ip
+              node-label    = each.value.labels
+              node-taint    = each.value.taints
+              kubelet-arg   = var.kubelet_args
+            }
+          )) : yamlencode(
+          {
+            flannel-iface = each.value.private_interface
+            node-ip       = each.value.ip
+            node-label    = each.value.labels
+            node-taint    = each.value.taints
+            kubelet-arg   = var.kubelet_args
+          }
+        ))
+      },
+    ]
+    run_cmd = concat(
+      local.base_run_cmd,
+      each.value.ip == local.first_controller_ip ? [
+        "${local.k3s_install} sh -s - server --cluster-init",
+        ] : [
+        "sleep 30",
+        "${local.k3s_install} K3S_URL=https://${local.first_controller_ip}:6443 sh -s - ${each.value.role == "controller" ? "server" : "agent"}",
+      ]
+    )
+  }
+))}
+EOT
 }
 
 resource "hcloud_server_network" "servers" {

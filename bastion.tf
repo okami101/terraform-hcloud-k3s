@@ -9,25 +9,27 @@ resource "hcloud_server" "bastion" {
   depends_on = [
     hcloud_network_subnet.network_subnet
   ]
-  user_data = yamlencode(merge(
-    local.base_cloud_init,
-    {
-      write_files = [
-        local.ssh_custom_config,
-        local.minion_custom_config,
-      ]
-      run_cmd = local.base_run_cmd
-    }
-  ))
-
   lifecycle {
     ignore_changes = [
       firewall_ids,
-      user_data,
+      # user_data,
       ssh_keys,
       image
     ]
   }
+  user_data = <<-EOT
+#cloud-init
+${yamlencode(merge(
+  local.base_cloud_init,
+  {
+    write_files = [
+      local.ssh_custom_config,
+      local.minion_custom_config,
+    ]
+    run_cmd = local.base_run_cmd
+  }
+))}
+EOT
 }
 
 resource "hcloud_server_network" "bastion" {
