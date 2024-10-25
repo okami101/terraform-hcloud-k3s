@@ -9,17 +9,16 @@ resource "hcloud_server" "bastion" {
   depends_on = [
     hcloud_network_subnet.network_subnet
   ]
-  user_data = templatefile("${path.module}/cloud-init-bastion.tftpl", {
-    server_timezone = var.server_timezone
-    server_locale   = var.server_locale
-    server_packages = var.server_packages
-    cluster_name    = var.cluster_name
-    cluster_user    = var.cluster_user
-    ssh_port        = var.ssh_port
-    public_ssh_keys = var.my_public_ssh_keys
-    bastion_ip      = local.bastion_ip
-    minion_id       = "bastion"
-  })
+  user_data = yamlencode(merge(
+    local.base_cloud_init,
+    {
+      write_files = [
+        local.ssh_custom_config,
+        local.minion_custom_config,
+      ]
+      run_cmd = local.base_run_cmd
+    }
+  ))
 
   lifecycle {
     ignore_changes = [

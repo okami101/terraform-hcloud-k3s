@@ -76,12 +76,6 @@ variable "my_ssh_key_names" {
   type        = list(string)
 }
 
-variable "my_public_ssh_keys" {
-  description = "Your public SSH keys that will be used to access the servers"
-  type        = list(string)
-  sensitive   = true
-}
-
 variable "my_ip_addresses" {
   description = "Your public IP addresses for port whitelist via the Hetzner firewall configuration"
   type        = list(string)

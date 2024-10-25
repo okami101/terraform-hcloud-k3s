@@ -17,42 +17,50 @@ resource "hcloud_server" "servers" {
   depends_on = [
     hcloud_network_subnet.network_subnet
   ]
-  user_data = templatefile("${path.module}/cloud-init-k3s.tftpl", {
-    server_timezone     = var.server_timezone
-    server_locale       = var.server_locale
-    server_packages     = var.server_packages
-    cluster_name        = var.cluster_name
-    cluster_user        = var.cluster_user
-    ssh_port            = var.ssh_port
-    public_ssh_keys     = var.my_public_ssh_keys
-    channel             = var.k3s_channel
-    token               = random_password.k3s_token.result
-    is_bastion          = !var.enable_dedicated_bastion && each.value.ip == local.first_controller_ip
-    bastion_ip          = local.bastion_ip
-    is_first_controller = each.value.ip == local.first_controller_ip
-    first_controller_ip = local.first_controller_ip
-    minion_id           = each.value.name
-    is_server           = each.value.role == "controller"
-    k3s_config = base64encode(each.value.role == "controller" ? yamlencode(
-      merge(
-        var.control_planes_custom_config,
+  user_data = yamlencode(merge(
+    local.base_cloud_init,
+    {
+      packages = var.server_packages,
+      write_files = [
+        local.ssh_custom_config,
+        local.minion_custom_config,
+        local.multipath_custom_config,
         {
-          flannel-iface = each.value.private_interface
-          node-ip       = each.value.ip
-          node-label    = each.value.labels
-          node-taint    = each.value.taints
-          kubelet-arg   = var.kubelet_args
-        }
-      )) : yamlencode(
-      {
-        flannel-iface = each.value.private_interface
-        node-ip       = each.value.ip
-        node-label    = each.value.labels
-        node-taint    = each.value.taints
-        kubelet-arg   = var.kubelet_args
-      }
-    ))
-  })
+          path        = "/etc/rancher/k3s/config.yaml"
+          encoding    = "b64"
+          permissions = "0644"
+          content = base64encode(each.value.role == "controller" ? yamlencode(
+            merge(
+              var.control_planes_custom_config,
+              {
+                flannel-iface = each.value.private_interface
+                node-ip       = each.value.ip
+                node-label    = each.value.labels
+                node-taint    = each.value.taints
+                kubelet-arg   = var.kubelet_args
+              }
+            )) : yamlencode(
+            {
+              flannel-iface = each.value.private_interface
+              node-ip       = each.value.ip
+              node-label    = each.value.labels
+              node-taint    = each.value.taints
+              kubelet-arg   = var.kubelet_args
+            }
+          ))
+        },
+      ]
+      run_cmd = concat(
+        local.base_run_cmd,
+        each.value.ip == local.first_controller_ip ? [
+          "${local.k3s_install} sh -s - server --cluster-init",
+          ] : [
+          "sleep 30",
+          "${local.k3s_install} K3S_URL=https://${local.first_controller_ip}:6443 sh -s - ${each.value.role == "controller" ? "server" : "agent"}",
+        ]
+      )
+    }
+  ))
 
   lifecycle {
     ignore_changes = [

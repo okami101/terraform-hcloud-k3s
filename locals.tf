@@ -72,4 +72,61 @@ locals {
       } if s.lb_type != null
     ]
   )
+  base_cloud_init = {
+    locale                     = var.server_locale
+    timezone                   = var.server_timezone
+    package_reboot_if_required = true
+    package_update             = true
+    package_upgrade            = true
+    users = [
+      {
+        groups = [
+          "adm",
+          "sudo",
+        ]
+        name  = var.cluster_user
+        shell = "/bin/bash"
+        sudo  = "ALL=(ALL) NOPASSWD:ALL"
+        uid   = 1000
+      },
+    ]
+  }
+  ssh_custom_config = {
+    content     = <<-EOT
+Port 2222
+PermitRootLogin no
+PasswordAuthentication no
+      EOT
+    path        = "/etc/ssh/sshd_config.d/99-custom.conf"
+    permissions = "0644"
+  }
+  minion_custom_config = {
+    content     = <<-EOT
+master: ${local.bastion_ip}
+EOT
+    path        = "/etc/salt/minion.d/99-custom.conf"
+    permissions = "0644"
+  }
+  multipath_custom_config = {
+    content     = <<-EOT
+defaults {
+  user_friendly_names yes
+}
+blacklist {
+    devnode "^sd[a-z0-9]+"
+}
+EOT
+    path        = "/etc/multipath.conf"
+    permissions = "0644"
+  }
+  base_run_cmd = [
+    "mkdir -p /home/${var.cluster_user}/.ssh",
+    "cp /root/.ssh/authorized_keys /home/${var.cluster_user}/.ssh/",
+    "chown -R ${var.cluster_user}:${var.cluster_user} /home/${var.cluster_user}/.ssh",
+    "chmod 700 /home/${var.cluster_user}/.ssh",
+    "chmod 600 /home/${var.cluster_user}/.ssh/authorized_keys",
+    "systemctl restart ssh",
+    "curl -L https://bootstrap.saltproject.io | sudo sh -s --"
+  ]
+  k3s_install = "curl -sfL https://get.k3s.io | INSTALL_K3S_CHANNEL=${var.k3s_channel} K3S_TOKEN=${random_password.k3s_token.result}"
 }
