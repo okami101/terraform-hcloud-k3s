@@ -93,7 +93,7 @@ locals {
   }
   ssh_custom_config = {
     content     = <<-EOT
-Port 2222
+Port ${var.ssh_port}
 PermitRootLogin no
 PasswordAuthentication no
       EOT
