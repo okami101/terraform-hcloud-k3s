@@ -18,7 +18,7 @@ resource "hcloud_server" "bastion" {
     ]
   }
   user_data = <<-EOT
-#cloud-init
+#cloud-config
 ${yamlencode(merge(
   local.base_cloud_init,
   {

@@ -26,7 +26,7 @@ resource "hcloud_server" "servers" {
     ]
   }
   user_data = <<-EOT
-#cloud-init
+#cloud-config
 ${yamlencode(merge(
   local.base_cloud_init,
   {
