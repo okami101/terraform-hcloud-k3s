@@ -61,12 +61,12 @@ ${yamlencode(merge(
       },
     ]
     runcmd = concat(
-      [local.salt_bootstrap_script + " | sh -s --"],
+      ["${local.salt_bootstrap_script} | sh -s --"],
       each.value.ip == local.first_controller_ip ?
-      [local.k3s_install_script + " sh -s - server --cluster-init"] :
+      ["${local.k3s_install_script} sh -s - server --cluster-init"] :
       [
         "sleep 30",
-        local.k3s_install_script + " K3S_URL=https://${local.first_controller_ip}:6443 sh -s - ${each.value.role == "controller" ? "server" : "agent"}",
+        "${local.k3s_install_script} K3S_URL=https://${local.first_controller_ip}:6443 sh -s - ${each.value.role == "controller" ? "server" : "agent"}",
       ]
     )
   }

@@ -27,7 +27,7 @@ ${yamlencode(merge(
       local.minion_custom_config,
     ]
     runcmd = [
-      local.salt_bootstrap_script + " | sh -s -- -M"
+      "${local.salt_bootstrap_script} | sh -s -- -M"
     ]
   }
 ))}
