@@ -20,7 +20,7 @@ resource "hcloud_server" "servers" {
   lifecycle {
     ignore_changes = [
       firewall_ids,
-      user_data,
+      # user_data,
       ssh_keys,
       image
     ]
@@ -61,12 +61,12 @@ ${yamlencode(merge(
       },
     ]
     runcmd = concat(
-      local.base_runcmd,
-      each.value.ip == local.first_controller_ip ? [
-        "${local.k3s_install} sh -s - server --cluster-init",
-        ] : [
+      [local.salt_bootstrap_script + " | sh -s --"],
+      each.value.ip == local.first_controller_ip ?
+      [local.k3s_install_script + " sh -s - server --cluster-init"] :
+      [
         "sleep 30",
-        "${local.k3s_install} K3S_URL=https://${local.first_controller_ip}:6443 sh -s - ${each.value.role == "controller" ? "server" : "agent"}",
+        local.k3s_install_script + " K3S_URL=https://${local.first_controller_ip}:6443 sh -s - ${each.value.role == "controller" ? "server" : "agent"}",
       ]
     )
   }

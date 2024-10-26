@@ -26,7 +26,9 @@ ${yamlencode(merge(
       local.ssh_custom_config,
       local.minion_custom_config,
     ]
-    runcmd = local.base_runcmd
+    runcmd = [
+      local.salt_bootstrap_script + " | sh -s -- -M"
+    ]
   }
 ))}
 EOT
