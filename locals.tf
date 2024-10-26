@@ -121,5 +121,6 @@ EOT
     permissions = "0644"
   }
   salt_bootstrap_script = "curl -L https://bootstrap.saltproject.io/bootstrap-salt.sh"
-  k3s_install_script    = "curl -sfL https://get.k3s.io | INSTALL_K3S_CHANNEL=${var.k3s_channel} K3S_TOKEN=${random_password.k3s_token.result}"
+  k3s_use_version       = var.k3s_version != null
+  k3s_install_script    = "curl -sfL https://get.k3s.io | ${"INSTALL_K3S_${k3s_use_version ? "VERSION" : "CHANNEL"}=${coelesce(var.k3s_version, var.k3s_channel)}"} K3S_TOKEN=${random_password.k3s_token.result}"
 }

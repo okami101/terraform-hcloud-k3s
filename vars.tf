@@ -104,6 +104,12 @@ variable "k3s_channel" {
   default     = "stable"
 }
 
+variable "k3s_version" {
+  description = "K3S version to use for the installation"
+  type        = string
+  default     = null
+}
+
 variable "kubelet_args" {
   description = "Additional arguments for each kubelet service"
   type        = list(string)
