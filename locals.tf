@@ -122,7 +122,7 @@ EOT
   }
   base_run_cmd = [
     "systemctl restart ssh",
-    "curl -L https://bootstrap.saltproject.io | sudo sh -s --"
+    "sudo curl -L https://bootstrap.saltproject.io/bootstrap-salt.sh | sudo sh -s --"
   ]
   k3s_install = "curl -sfL https://get.k3s.io | INSTALL_K3S_CHANNEL=${var.k3s_channel} K3S_TOKEN=${random_password.k3s_token.result}"
 }
