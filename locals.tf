@@ -84,13 +84,11 @@ locals {
           "adm",
           "sudo",
         ]
-        name  = var.cluster_user
-        shell = "/bin/bash"
-        sudo  = "ALL=(ALL) NOPASSWD:ALL"
-        uid   = 1000
-        ssh_authorized_keys = [
-          var.my_public_ssh_keys,
-        ]
+        name                = var.cluster_user
+        shell               = "/bin/bash"
+        sudo                = "ALL=(ALL) NOPASSWD:ALL"
+        uid                 = 1000
+        ssh_authorized_keys = var.my_public_ssh_keys
       },
     ]
   }
