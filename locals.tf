@@ -88,6 +88,9 @@ locals {
         shell = "/bin/bash"
         sudo  = "ALL=(ALL) NOPASSWD:ALL"
         uid   = 1000
+        ssh_authorized_keys = [
+          var.my_public_ssh_keys,
+        ]
       },
     ]
   }
@@ -119,11 +122,6 @@ EOT
     permissions = "0644"
   }
   base_run_cmd = [
-    "mkdir -p /home/${var.cluster_user}/.ssh",
-    "cp /root/.ssh/authorized_keys /home/${var.cluster_user}/.ssh/",
-    "chown -R ${var.cluster_user}:${var.cluster_user} /home/${var.cluster_user}/.ssh",
-    "chmod 700 /home/${var.cluster_user}/.ssh",
-    "chmod 600 /home/${var.cluster_user}/.ssh/authorized_keys",
     "systemctl restart ssh",
     "curl -L https://bootstrap.saltproject.io | sudo sh -s --"
   ]
