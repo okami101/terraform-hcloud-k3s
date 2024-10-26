@@ -20,7 +20,7 @@ resource "hcloud_server" "servers" {
   lifecycle {
     ignore_changes = [
       firewall_ids,
-      user_data,
+      # user_data,
       ssh_keys,
       image
     ]
