@@ -26,7 +26,7 @@ ${yamlencode(merge(
       local.ssh_custom_config,
       local.minion_custom_config,
     ]
-    run_cmd = local.base_run_cmd
+    runcmd = local.base_runcmd
   }
 ))}
 EOT

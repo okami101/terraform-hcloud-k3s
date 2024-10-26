@@ -60,8 +60,8 @@ ${yamlencode(merge(
         ))
       },
     ]
-    run_cmd = concat(
-      local.base_run_cmd,
+    runcmd = concat(
+      local.base_runcmd,
       each.value.ip == local.first_controller_ip ? [
         "${local.k3s_install} sh -s - server --cluster-init",
         ] : [
