@@ -111,10 +111,10 @@ EOT
   multipath_custom_config = {
     content     = <<-EOT
 defaults {
-  user_friendly_names yes
+    user_friendly_names yes
 }
 blacklist {
-  devnode "^sd[a-z0-9]+"
+    devnode "^sd[a-z0-9]+"
 }
 EOT
     path        = "/etc/multipath.conf"
