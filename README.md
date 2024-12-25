@@ -1,6 +1,6 @@
 # Terraform Hetzner Cloud K3S
 
-Replaced by [Kube-Hetzner](https://github.com/okami101/terraform-hcloud-microos-k3s).
+Replaced by [this repo](https://github.com/okami101/terraform-hcloud-microos-k3s).
 
 ## 🎯 About
 
