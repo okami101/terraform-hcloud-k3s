@@ -1,5 +1,7 @@
 # Terraform Hetzner Cloud K3S
 
+Replaced by [Kube-Hetzner](https://github.com/okami101/terraform-hcloud-microos-k3s).
+
 ## 🎯 About
 
 Get a cheap HA-ready Kubernetes cluster in less than **5 minutes**, with easy configuration setup through simple Terraform variables, 💯 GitOps compatible !
